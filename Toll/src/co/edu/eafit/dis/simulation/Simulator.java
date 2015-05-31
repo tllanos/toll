@@ -54,8 +54,78 @@ public class Simulator {
 			generateVehicle(i);
 		}
 		assignVehicles();
+		Worker worker = new Worker(connection, pstate, tolls, rs);
+		Thread thread = new Thread(worker);
+		thread.start();
+	}
+	
+	private static class Worker implements Runnable{
 		
+		private ArrayList<Toll> tolls;
+		private PreparedStatement pstate = null;
+		private Connection connection;
+		private ResultSet rs;
 		
+		public void run(){
+			while(true){
+				assignFlow();
+				System.out.println("Update!");
+				try{
+				Thread.sleep(1000);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		public Worker(Connection connection, PreparedStatement pstate, ArrayList<Toll> tolls, ResultSet rs){
+			this.connection = connection;
+			this.pstate = pstate;
+			this.rs = rs;
+			this.tolls = tolls;
+		}
+		
+		private void assignFlow(){
+			try{
+				int id;
+				int f;
+				for(Toll toll: tolls){
+					f = 0;
+					id = toll.getId();
+					
+					pstate = connection.prepareStatement(
+							"SELECT COUNT(tollid) FROM tollcash WHERE date > date_sub(NOW(), INTERVAL 1 MINUTE) AND tollid = ?;");
+					pstate.setInt(1, id);
+					
+					rs = pstate.executeQuery();
+					if(rs.next()){
+						f += rs.getInt(1);
+					}
+					
+					pstate = connection.prepareStatement(
+							"SELECT COUNT(tollid) FROM tollsensor WHERE date > date_sub(NOW(), INTERVAL 1 MINUTE) AND tollid = ?;");
+					pstate.setInt(1, id);
+					
+					rs = pstate.executeQuery();
+					if(rs.next()){
+						f += rs.getInt(1);
+					}
+					
+					pstate = connection.prepareStatement(
+							"SELECT COUNT(tollid) FROM tollphoto WHERE date > date_sub(NOW(), INTERVAL 1 MINUTE) AND tollid = ?;");
+					
+					pstate.setInt(1, id);
+					
+					rs = pstate.executeQuery();
+					if(rs.next()){
+						f += rs.getInt(1);
+					}
+					toll.setFlow(f);
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private void generateGraph(){
@@ -80,16 +150,15 @@ public class Simulator {
 					for(Intersection ints: intersections){
 						if(ints.getId() == rs.getInt(1)){
 							ints.connectTo(tollid);
+							ints.connectTo(tollid.getId());
 							System.out.println("Toll: " + tollid.getId() + "-> Intersection: " + ints.getId());
 							tollid.connectTo(ints);
+							tollid.connectTo(ints.getId());
 						}
 					}
 				}
 			}
 			rs.close();
-			for(Toll toll: tolls){
-				toll.setMaxFlow(20);
-			}
 			for(Intersection ints: intersections.subList(0, 8)){
 				ints.setSource(true);
 				System.out.println("Sources: " + ints.getId());
