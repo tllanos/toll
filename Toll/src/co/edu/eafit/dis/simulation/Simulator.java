@@ -43,14 +43,16 @@ public class Simulator {
 		}catch(SQLException e) { 
 			e.printStackTrace(); 
 		}
-		
-		generateGraph();
+		simulate();
 	}
 	
 	public void simulate() {
+		//Start
+		generateGraph();
 		for (double i = 0; i < Math.PI; i = i + (Math.PI / 128)) {
 			generateVehicle(i);
 		}
+		assignVehicles();
 	}
 	
 	private void generateGraph(){
@@ -109,10 +111,14 @@ public class Simulator {
 				Integer values[] = {userid, type};
 				users.add(values);
 			}
-		
 			rs.close();
 		} catch(SQLException e) { 
 			System.out.println(e); 
 		}
 	}
+
+	private void assignVehicles(){
+		
+	}
+
 }
