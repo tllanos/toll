@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import co.edu.eafit.dis.graph.Intersection;
 import co.edu.eafit.dis.graph.Toll;
+import co.edu.eafit.dis.entity.Vehicle;
 
 public class Simulator {
 	private int valueFunction;
@@ -19,7 +20,7 @@ public class Simulator {
 	private Statement st;
 	private ResultSet rs;
 	private Connection connection;
-	private ArrayList<Integer[]> users = new ArrayList<Integer[]>();
+	private ArrayList<Vehicle> users = new ArrayList<Vehicle>();
 	private ArrayList<Toll> tolls;
 	private ArrayList<Intersection> intersections;
 	private String query = null;
@@ -33,7 +34,7 @@ public class Simulator {
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql://localhost/tollcontrol?"
-		              + "user=root&password=ccr");
+		              + "user=root&password=animalihavebecome");
 		}catch(Exception e){
 			System.out.println("Error connecting to the database");
 		}
@@ -108,8 +109,7 @@ public class Simulator {
 				userid = rs.getInt("userid");
 				type = rs.getInt("type");
 				// System.out.println("User ID: " + userid + " Type: " + type);
-				Integer values[] = {userid, type};
-				users.add(values);
+				users.add(new Vehicle(userid,type));
 			}
 			rs.close();
 		} catch(SQLException e) { 
@@ -118,6 +118,21 @@ public class Simulator {
 	}
 
 	private void assignVehicles(){
+		int random;
+		for(Vehicle vehicle: users){
+			random = (int)(Math.random()* 8);
+			vehicle.setInitialPoint(random);
+			random = (int)(Math.random()* 8);
+			if(vehicle.getInitialPoint() == random){
+				while(vehicle.getInitialPoint() == random){	
+					random = (int)(Math.random()* 8);
+				}
+				vehicle.setDestination(random);
+			}else{
+				vehicle.setDestination(random);
+			}
+		}
+		
 		
 	}
 
