@@ -34,7 +34,7 @@ public class Simulator {
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql://localhost/tollcontrol?"
-		              + "user=root&password=animalihavebecome");
+		              + "user=root&password=root");
 		}catch(Exception e){
 			System.out.println("Error connecting to the database");
 		}
@@ -54,6 +54,8 @@ public class Simulator {
 			generateVehicle(i);
 		}
 		assignVehicles();
+		
+		
 	}
 	
 	private void generateGraph(){
