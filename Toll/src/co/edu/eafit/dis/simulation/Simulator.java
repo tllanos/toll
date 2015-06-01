@@ -10,13 +10,12 @@ import java.util.ArrayList;
 
 import co.edu.eafit.dis.graph.Intersection;
 import co.edu.eafit.dis.graph.Toll;
+import co.edu.eafit.dis.analysis.Calculation;
+import co.edu.eafit.dis.dijkstra.Dijkstra;
 import co.edu.eafit.dis.entity.Vehicle;
 
 public class Simulator {
 	private int valueFunction;
-	private int numTollCash;
-	private int numTollPhoto;
-	private int numTollSensor;
 	private Statement st;
 	private ResultSet rs;
 	private Connection connection;
@@ -54,9 +53,19 @@ public class Simulator {
 			generateVehicle(i);
 		}
 		assignVehicles();
-		Worker worker = new Worker(connection, pstate, tolls, rs);
+		/*Vehicle vehicle = new Vehicle(1,3);
+		vehicle.setInitialPoint(1);
+		vehicle.setDestination(8);
+		Calculation c = new Calculation(tolls, intersections, vehicle);
+		ArrayList<Integer> a = c.dijkstra();
+		for(Integer b : a) {
+			System.out.println(" " + b);
+		}*/
+		Dijkstra d = new Dijkstra();
+		d.initDijkstra(tolls, intersections);
+		/*Worker worker = new Worker(connection, pstate, tolls, rs);
 		Thread thread = new Thread(worker);
-		thread.start();
+		thread.start();*/
 	}
 	
 	private static class Worker implements Runnable{

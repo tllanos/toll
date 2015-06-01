@@ -9,36 +9,36 @@ import co.edu.eafit.dis.graph.Node;
 import co.edu.eafit.dis.graph.Toll;
 
 public class Calculation {
-	private ArrayList<Toll> tolls = new ArrayList<Toll>();
-	private ArrayList<Intersection> intersections = new ArrayList<Intersection>();
-	private Vehicle vehicle;
+	private ArrayList<Toll> tolls;
+	private ArrayList<Intersection> intersections;
 	private int distance[];
-	private int preview[];
+	private ArrayList<Integer> preview;
 	private boolean visited[];
+	private Vehicle vehicle;
 	int graphSize;
 	int n[];
 	
-	private PriorityQueue<Node> pq;
-	
 	public Calculation(ArrayList<Toll> tolls, 
 			ArrayList<Intersection> intersections, Vehicle vehicle) {
-		pq = new PriorityQueue<Node>();
 		graphSize = tolls.size() + intersections.size();
 		distance = new int[graphSize];
-		preview  = new int[graphSize];
-		visited  = new boolean[graphSize];		
+		preview  = new ArrayList<Integer>();
+		visited  = new boolean[graphSize];
+		this.intersections = intersections;
+		this.tolls = tolls;
+		this.vehicle = vehicle;
 	}
 	
-	public int[] dijkstra() {
+	public ArrayList<Integer> dijkstra() {
 		for(int i = 0; i < graphSize; i++) {
 			distance[i] = Integer.MAX_VALUE;
-			preview[i] = -1;
 			visited[i] = false;
 		}
 		
+		distance[vehicle.getInitialPoint()] = 0;
 		
 		for(int i = 0; i < distance.length; i++) {
-			int next = minVertex(distance, visited);
+			int next = minVertex(distance, visited) + 1;
 			visited[next] = true;
 			boolean found = false;
 			
@@ -63,12 +63,12 @@ public class Calculation {
 			for(int j = 0; j < n.length; j++) {
 				int vertex = n[j];
 				if(returnFlow(vertex) != 0) {
-					distan =  distance[next] + returnFlow(vertex);
-				} else distan = distance[next] + returnFlow(next);
+					distan =  distance[next - 1] + returnFlow(vertex);
+				} else distan = distance[next - 1] + returnFlow(next);
 				
 				if(distance[vertex] > distan) {
 					distance[vertex] = distan;
-					preview [vertex] = next;
+					preview .add(next);
 				}
 			}
 		}
