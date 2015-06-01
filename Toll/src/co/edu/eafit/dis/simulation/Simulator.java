@@ -7,19 +7,19 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import co.edu.eafit.dis.graph.Intersection;
 import co.edu.eafit.dis.graph.Toll;
-import co.edu.eafit.dis.analysis.Calculation;
 import co.edu.eafit.dis.dijkstra.Dijkstra;
 import co.edu.eafit.dis.entity.Vehicle;
 
 public class Simulator {
-	private int valueFunction;
 	private Statement st;
 	private ResultSet rs;
 	private Connection connection;
-	private ArrayList<Vehicle> users = new ArrayList<Vehicle>();
+	private ArrayList<Thread> vSim;
 	private ArrayList<Toll> tolls;
 	private ArrayList<Intersection> intersections;
 	private String query = null;
@@ -29,7 +29,7 @@ public class Simulator {
 		
 		tolls = new ArrayList<Toll>();
 		intersections = new ArrayList<Intersection>();
-		
+		vSim = new ArrayList<Thread>();
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql://localhost/tollcontrol?"
@@ -49,23 +49,12 @@ public class Simulator {
 	public void simulate() {
 		//Start
 		generateGraph();
-		for (double i = 0; i < Math.PI; i = i + (Math.PI / 128)) {
-			generateVehicle(i);
-		}
-		assignVehicles();
-		/*Vehicle vehicle = new Vehicle(1,3);
-		vehicle.setInitialPoint(1);
-		vehicle.setDestination(8);
-		Calculation c = new Calculation(tolls, intersections, vehicle);
-		ArrayList<Integer> a = c.dijkstra();
-		for(Integer b : a) {
-			System.out.println(" " + b);
-		}*/
-		Dijkstra d = new Dijkstra();
-		d.initDijkstra(tolls, intersections);
-		/*Worker worker = new Worker(connection, pstate, tolls, rs);
-		Thread thread = new Thread(worker);
-		thread.start();*/
+		Worker worker = new Worker(connection, pstate, tolls, rs);
+		Thread threadw = new Thread(worker);
+		threadw.start();
+		Generator generator =  new Generator(vSim, intersections, tolls);
+		Thread threadg = new Thread(generator);
+		threadg.start();
 	}
 	
 	private static class Worker implements Runnable{
@@ -80,7 +69,7 @@ public class Simulator {
 				assignFlow();
 				System.out.println("Update!");
 				try{
-				Thread.sleep(1000);
+				Thread.sleep(60000);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -94,7 +83,7 @@ public class Simulator {
 			this.tolls = tolls;
 		}
 		
-		private void assignFlow(){
+		private synchronized void assignFlow(){
 			try{
 				int id;
 				int f;
@@ -160,7 +149,7 @@ public class Simulator {
 						if(ints.getId() == (rs.getInt(1)+tolls.size())){
 							ints.connectTo(tollid);
 							ints.connectTo(tollid.getId());
-							System.out.println("Toll: " + tollid.getId() + "-> Intersection: " + ints.getId());
+//							System.out.println("Toll: " + tollid.getId() + "-> Intersection: " + ints.getId());
 							tollid.connectTo(ints);
 							tollid.connectTo(ints.getId());
 						}
@@ -170,50 +159,52 @@ public class Simulator {
 			rs.close();
 			for(Intersection ints: intersections.subList(0, 8)){
 				ints.setSource(true);
-				System.out.println("Sources: " + ints.getId());
+//				System.out.println("Sources: " + ints.getId());
 			}
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
 	}
 	
-	private void generateVehicle(double value){
-		valueFunction = (int)(Math.sin(value) * 100);
+	private void generateVehicle(/*double value*/){
+
 		
-		String query = "SELECT userid, type FROM users LIMIT 0,"
-				+ valueFunction;
-		try {
-			rs = st.executeQuery(query);
-			int userid, type;
-			while(rs.next()) {
-				userid = rs.getInt("userid");
-				type = rs.getInt("type");
-				// System.out.println("User ID: " + userid + " Type: " + type);
-				users.add(new Vehicle(userid,type));
-			}
-			rs.close();
-		} catch(SQLException e) { 
-			System.out.println(e); 
-		}
+//		valueFunction = (int)(Math.sin(value) * 100);
+//		
+//		String query = "SELECT userid, type FROM users LIMIT 0,"
+//				+ valueFunction;
+//		try {
+//			rs = st.executeQuery(query);
+//			int userid, type;
+//			while(rs.next()) {
+//				userid = rs.getInt("userid");
+//				type = rs.getInt("type");
+//				// System.out.println("User ID: " + userid + " Type: " + type);
+//				users.add(new Vehicle(userid,type));
+//			}
+//			rs.close();
+//		} catch(SQLException e) { 
+//			System.out.println(e); 
+//		}
 	}
 
 	private void assignVehicles(){
-		int random;
-		for(Vehicle vehicle: users){
-			random = (int)(Math.random()* 8);
-			vehicle.setInitialPoint(random);
-			random = (int)(Math.random()* 8);
-			if(vehicle.getInitialPoint() == random){
-				while(vehicle.getInitialPoint() == random){	
-					random = (int)(Math.random()* 8);
-				}
-				vehicle.setDestination(random);
-			}else{
-				vehicle.setDestination(random);
-			}
-		}
-		
-		
+//		int random;
+//		for(Vehicle vehicle: users){
+//			random = (int)(Math.random()* 8);
+//			vehicle.setInitialPoint(random);
+//			random = (int)(Math.random()* 8);
+//			if(vehicle.getInitialPoint() == random){
+//				while(vehicle.getInitialPoint() == random){	
+//					random = (int)(Math.random()* 8);
+//				}
+//				vehicle.setDestination(random);
+//			}else{
+//				vehicle.setDestination(random);
+//			}
+//		}
+//		
+//		
+//	}
 	}
-
 }
