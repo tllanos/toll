@@ -89,8 +89,10 @@ public class Dijkstra {
     		int connection[] = toll.get(i).getConnectionInt();
     		for(int j = 0; j < toll.get(i).getConnectionInt().length; j++) {
     			edges[j] = new Edge(new Vertex(connection[j] + ""), 
-    					toll.get(i).getFlow());
+    					toll.get(j).getFlow());
+    			System.out.println("" + toll.get(j).getId() + " -> " + connection[j]);
     		}
+    		v.get(i).adjacencies = edges;
     	}
     	
     	for(int i = 0; i < inter.size(); i++) {
@@ -99,7 +101,9 @@ public class Dijkstra {
     		for(int j = 0; j < inter.get(i).getConnectionInt().length; j++) {
     			edges[j] = new Edge(new Vertex(connection[j] + ""), 
     					getIntFlow(connection[j], toll));
+    			System.out.println("" + connection[j] + " -> " + getIntFlow(connection[j], toll));
     		}
+    		v.get(i).adjacencies = edges;
     	}
     	
     	
@@ -122,7 +126,9 @@ public class Dijkstra {
 		v4.adjacencies = new Edge[]{ new Edge(v1, 7),
 	                               new Edge(v3, 2) };
 		Vertex[] vertices = { v0, v1, v2, v3, v4 };*/
-	        computePaths(v.get(1));
+    	
+    	System.out.println(v.get(0).adjacencies.length);
+	        computePaths(v.get(0));
 	        
 	    for (Vertex vert : v) {
 		    System.out.println("Distance to " + vert + ": " + vert.minDistance);
