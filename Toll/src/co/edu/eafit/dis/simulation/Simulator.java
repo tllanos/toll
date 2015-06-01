@@ -148,7 +148,7 @@ public class Simulator {
 			query = "SELECT intid FROM intersection";
 			rs = st.executeQuery(query);
 			while(rs.next()){
-				intersections.add(new Intersection(rs.getInt(1),false));
+				intersections.add(new Intersection((rs.getInt(1)+tolls.size()),false));
 			}
 			rs.close();
 			for(Toll tollid: tolls){
@@ -157,7 +157,7 @@ public class Simulator {
 				rs = pstate.executeQuery();
 				while(rs.next()){
 					for(Intersection ints: intersections){
-						if(ints.getId() == rs.getInt(1)){
+						if(ints.getId() == (rs.getInt(1)+tolls.size())){
 							ints.connectTo(tollid);
 							ints.connectTo(tollid.getId());
 							System.out.println("Toll: " + tollid.getId() + "-> Intersection: " + ints.getId());

@@ -31,8 +31,11 @@ class Edge {
 }
 
 public class Dijkstra {
+	
+    public ArrayList<Vertex> v;
+    
     public static void computePaths(Vertex source) {
-        source.minDistance = 0.;
+        source.minDistance = 0;
         PriorityQueue<Vertex> vertexQueue = new PriorityQueue<Vertex>();
       	vertexQueue.add(source);
 
@@ -63,18 +66,30 @@ public class Dijkstra {
     }
     
     public int getIntFlow(int id, ArrayList<Toll> toll) {
+    	System.out.println("Flow to " + id);
     		int flow = 0;
     	for(Toll t : toll) {
     		if(t.getId() == id) {
-    			flow = t.getFlow(); break;
+    			flow = t.getFlow(); 
+    			break;
     		}
     	}
     	return flow;
     }
+    
+    public Vertex matchVertex(String id){
+    	for (Vertex vert: v){
+    		if(vert.name.equals(id)){
+    			return vert;
+    		}
+    	}
+    	return null;
+    }
 
     public void initDijkstra(ArrayList<Toll> toll, ArrayList<Intersection> inter) {
     	
-    	ArrayList<Vertex> v = new ArrayList<Vertex>();
+    	
+    	v = new ArrayList<Vertex>();
     	
     	for(int i = 0; i < toll.size(); i++) {
     		v.add(new Vertex(toll.get(i).getId() + ""));
@@ -85,25 +100,29 @@ public class Dijkstra {
     	}
     	
     	for(int i = 0; i < toll.size(); i++) {
+    		System.out.println(toll.get(i).getId());
     		Edge edges[] = new Edge[toll.get(i).getConnectionInt().length];
     		int connection[] = toll.get(i).getConnectionInt();
     		for(int j = 0; j < toll.get(i).getConnectionInt().length; j++) {
-    			edges[j] = new Edge(new Vertex(connection[j] + ""), 
+    			edges[j] = new Edge(matchVertex(Integer.toString(connection[j])), 
     					toll.get(j).getFlow());
-    			System.out.println("" + toll.get(j).getId() + " -> " + connection[j]);
+    			System.out.println("" + toll.get(i).getId() + " -> " + (connection[j]));
     		}
     		v.get(i).adjacencies = edges;
     	}
+
+    	System.out.println("PARTIR");
     	
     	for(int i = 0; i < inter.size(); i++) {
+    		System.out.println(inter.get(i).getId());
     		Edge edges[] = new Edge[inter.get(i).getConnectionInt().length];
     		int connection[] = inter.get(i).getConnectionInt();
     		for(int j = 0; j < inter.get(i).getConnectionInt().length; j++) {
-    			edges[j] = new Edge(new Vertex(connection[j] + ""), 
+    			edges[j] = new Edge(matchVertex(Integer.toString(connection[j])), 
     					getIntFlow(connection[j], toll));
-    			System.out.println("" + connection[j] + " -> " + getIntFlow(connection[j], toll));
+    			System.out.println(inter.get(i).getId() + " -> " + connection[j]);
     		}
-    		v.get(i).adjacencies = edges;
+    		v.get(i+toll.size()).adjacencies = edges;
     	}
     	
     	
@@ -127,8 +146,7 @@ public class Dijkstra {
 	                               new Edge(v3, 2) };
 		Vertex[] vertices = { v0, v1, v2, v3, v4 };*/
     	
-    	System.out.println(v.get(0).adjacencies.length);
-	        computePaths(v.get(0));
+	    computePaths(v.get(14));
 	        
 	    for (Vertex vert : v) {
 		    System.out.println("Distance to " + vert + ": " + vert.minDistance);
