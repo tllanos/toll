@@ -9,6 +9,7 @@ public abstract class Node {
 	ArrayList<Node> connection;
 	ArrayList<Integer> connectionInt;
 	
+	
 	public Node(int id, boolean source){
 		connection = new ArrayList<Node>();
 		connectionInt =  new ArrayList<Integer>();

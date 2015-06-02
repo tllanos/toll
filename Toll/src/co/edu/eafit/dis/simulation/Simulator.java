@@ -12,6 +12,7 @@ import java.util.Date;
 
 import co.edu.eafit.dis.graph.Intersection;
 import co.edu.eafit.dis.graph.Toll;
+import co.edu.eafit.dis.tollbooths.Register;
 import co.edu.eafit.dis.dijkstra.Dijkstra;
 import co.edu.eafit.dis.entity.Vehicle;
 
@@ -20,16 +21,19 @@ public class Simulator {
 	private ResultSet rs;
 	private Connection connection;
 	private ArrayList<Thread> vSim;
+	private ArrayList<Thread> tSim;
 	private ArrayList<Toll> tolls;
 	private ArrayList<Intersection> intersections;
 	private String query = null;
 	private PreparedStatement pstate = null;
+	private Register register;
 	
 	public Simulator() {
 		
 		tolls = new ArrayList<Toll>();
 		intersections = new ArrayList<Intersection>();
 		vSim = new ArrayList<Thread>();
+		tSim = new ArrayList<Thread>();
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql://localhost/tollcontrol?"
@@ -49,12 +53,14 @@ public class Simulator {
 	public void simulate() {
 		//Start
 		generateGraph();
+		register = new Register(tolls);
 		Worker worker = new Worker(connection, pstate, tolls, rs);
 		Thread threadw = new Thread(worker);
 		threadw.start();
-		Generator generator =  new Generator(vSim, intersections, tolls);
+		Generator generator =  new Generator(vSim, intersections, tolls, register);
 		Thread threadg = new Thread(generator);
 		threadg.start();
+		while(true);
 	}
 	
 	private static class Worker implements Runnable{
@@ -160,6 +166,12 @@ public class Simulator {
 			for(Intersection ints: intersections.subList(0, 8)){
 				ints.setSource(true);
 //				System.out.println("Sources: " + ints.getId());
+			}
+			for(Toll t: tolls){
+				tSim.add(new Thread(t));
+			}
+			for(Thread th: tSim){
+				th.start();
 			}
 		}catch(SQLException e){
 			e.printStackTrace();

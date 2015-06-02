@@ -1,5 +1,12 @@
 package co.edu.eafit.dis.tollbooths;
 
-public class TollCash {
+import co.edu.eafit.dis.entity.Vehicle;
+import co.edu.eafit.dis.graph.Toll;
 
+public class TollCash extends TollBooth{
+
+	public TollCash(Toll location){
+		super(location);	
+	}
+	
 }
