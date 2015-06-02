@@ -42,7 +42,7 @@ public class Vehicle implements Runnable{
 		int next;
 		while(!path.isEmpty()){
 			next = Integer.parseInt(path.get(0).name);
-			if(next < tolls.size()){
+			if(next < tolls.size()+1){
 				for(Toll t: tolls){
 					if(t.getId() == next){
 						System.out.println("Ingresando a: " + next);
@@ -53,13 +53,10 @@ public class Vehicle implements Runnable{
 						}
 						path.remove(0);
 						last = t;
-						try {
-							register.addVehicle(t.getId(), this);
-							synchronized(t){
-								t.wait();
-							}
-						} catch (InterruptedException e) {
-								e.printStackTrace();
+						synchronized (((Toll) last).b1) {
+							((Toll) last).recieveVehicle(this);
+						}
+						synchronized(last){
 						}
 						System.out.println("Hice mi transaccion");
 						break;
@@ -68,11 +65,13 @@ public class Vehicle implements Runnable{
 			}else{
 				for(Intersection i: intersections){
 					if(i.getId() == next){
+						System.out.println("Ingresando a: " + next);
 						if(!(last instanceof Toll)){
 							System.exit(1);
 						}
 						path.remove(0);
 						i.addVehicle(this);
+						last = i;
 						break;
 					}
 				}

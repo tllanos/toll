@@ -12,7 +12,7 @@ public class Register {
 		this.tolls = tolls;
 	}
 	
-	public synchronized void addVehicle(int tollid, Vehicle vehicle){
+	public void addVehicle(int tollid, Vehicle vehicle){
 		for(Toll toll: tolls){
 			if(tollid == toll.getId()){
 				System.out.println("Toll: " + tollid);

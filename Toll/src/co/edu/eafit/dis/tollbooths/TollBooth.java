@@ -24,6 +24,5 @@ public abstract class TollBooth {
 	public void recieveVehicle(Vehicle vehicle){
 		q.add(vehicle);
 		System.out.println("Agregado y frenado: " + vehicle.getUserid());
-		System.out.println(this);
 	}
 }

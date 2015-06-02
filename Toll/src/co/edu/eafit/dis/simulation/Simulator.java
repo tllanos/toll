@@ -34,6 +34,7 @@ public class Simulator {
 		intersections = new ArrayList<Intersection>();
 		vSim = new ArrayList<Thread>();
 		tSim = new ArrayList<Thread>();
+		register = new Register(tolls);
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql://localhost/tollcontrol?"
@@ -53,7 +54,6 @@ public class Simulator {
 	public void simulate() {
 		//Start
 		generateGraph();
-		register = new Register(tolls);
 		Worker worker = new Worker(connection, pstate, tolls, rs);
 		Thread threadw = new Thread(worker);
 		threadw.start();
@@ -137,7 +137,7 @@ public class Simulator {
 			query = "SELECT tollid FROM toll";
 			rs = st.executeQuery(query);
 			while(rs.next()){
-				tolls.add(new Toll(rs.getInt(1),false));
+				tolls.add(new Toll(rs.getInt(1),false,register));
 			}
 			rs.close();
 			query = "SELECT intid FROM intersection";
