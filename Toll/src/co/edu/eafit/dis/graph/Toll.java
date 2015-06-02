@@ -11,20 +11,20 @@ import co.edu.eafit.dis.tollbooths.TollScanner;
 
 public class Toll extends Node {
 	
-	public ArrayList<TollBooth> cashB;
-	public ArrayList<TollBooth> scannerB;
-	public ArrayList<TollBooth> photoB;
+	public ArrayList<TollCash> cashB;
+	public ArrayList<TollScanner> scannerB;
+	public ArrayList<TollPhoto> photoB;
 	private ArrayList<Thread> boothP;
 	private int flow;
 	private Register register;
 	
 	public Toll(int id, boolean source, Register register){
 		super(id, source);
-		cashB = new ArrayList<TollBooth>();
+		cashB = new ArrayList<TollCash>();
 		cashB.add(new TollCash(this));
-		scannerB = new ArrayList<TollBooth>();
+		scannerB = new ArrayList<TollScanner>();
 		scannerB.add(new TollScanner(this));
-		photoB = new ArrayList<TollBooth>();
+		photoB = new ArrayList<TollPhoto>();
 		photoB.add(new TollPhoto(this));
 		boothP = new ArrayList<Thread>();
 		
@@ -68,17 +68,19 @@ public class Toll extends Node {
 //		}
 	}
 	
-	public synchronized void recieveVehicle(Vehicle vehicle){
+	public void recieveVehicle(Vehicle vehicle){
+		System.out.println("Recibido");
 		switch(vehicle.getType()){
-		case 0:
-			cashB.get(0).q.add(vehicle);
 		case 1:
-			photoB.get(0).q.add(vehicle);
+			cashB.get(0).q.add(vehicle);
+			break;
 		case 2:
+			photoB.get(0).q.add(vehicle);
+			break;
+		case 3:
 			scannerB.get(0).q.add(vehicle);
+			break;
 		}
-//		cashB.get(0).q.add(vehicle);
-//		cashB.notify();	
 	}
 	
 	public void setFlow(int f){

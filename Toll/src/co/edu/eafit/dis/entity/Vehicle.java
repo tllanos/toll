@@ -58,13 +58,14 @@ public class Vehicle implements Runnable{
 						last = t;
 						((Toll)last).recieveVehicle(this);	
 						System.out.println("Estoy esperando");
-						while(!this.visited){};
+						while(!this.visited){
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
 						System.out.println("Pase");
-//						synchronized (((Toll) last).cashB) {
-//							((Toll) last).recieveVehicle(this);
-//						}
-//						synchronized(last){
-//						}
 						System.out.println("Hice mi transaccion");
 						break;
 					}
@@ -78,12 +79,20 @@ public class Vehicle implements Runnable{
 						}
 						path.remove(0);
 						i.addVehicle(this);
+						try {
+							System.out.println("transitando");
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 						last = i;
 						break;
 					}
 				}
 			}
 		}
+		Thread.yield();
+		System.out.println("Llegue");
 	}
 	
 	public Vehicle(int userid, int type, List<Vertex> path, ArrayList<Toll> tolls, ArrayList<Intersection> intersections, Register register){
@@ -95,8 +104,9 @@ public class Vehicle implements Runnable{
 		this.register = register;
 	}
 	
-	public synchronized void setVisited(boolean visited){
+	public void setVisited(boolean visited){
 		this.visited = visited;
+		System.out.println("VISITE");
 	}
 	
 	public int getType(){

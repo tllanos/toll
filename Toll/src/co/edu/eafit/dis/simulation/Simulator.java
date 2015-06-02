@@ -60,7 +60,20 @@ public class Simulator {
 		Generator generator =  new Generator(vSim, intersections, tolls, register);
 		Thread threadg = new Thread(generator);
 		threadg.start();
-		while(true);
+		while(true){
+//			for(Thread t: vSim){
+//				try {
+//					t.join();
+//					System.out.println("Matando a " + t.getId());
+//					synchronized(t){
+//						vSim.remove(t);
+//					}
+//					System.out.println("Fue destruido");
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//			}
+		}
 	}
 	
 	private static class Worker implements Runnable{

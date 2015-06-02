@@ -22,9 +22,10 @@ public abstract class TollBooth implements Runnable{
 		q = new LinkedList<Vehicle>();
 	}
 	
-	public void recieveVehicle(Vehicle vehicle){
+	public synchronized void recieveVehicle(Vehicle vehicle){
 		q.add(vehicle);
 		System.out.println("Agregado y frenado: " + vehicle.getUserid());
+		q.notify();
 	}
 	
 	public int getType(){

@@ -43,7 +43,7 @@ public class Generator implements Runnable{
 			Calendar rightNow = Calendar.getInstance();
 			int hour = rightNow.get(Calendar.HOUR_OF_DAY);
 			double f = (hour / 24.0d);
-			int quantity = Math.abs((int)(((Math.sin((2 * Math.PI) * f)) * 30.0d) + 0.5d));
+			int quantity = Math.abs((int)(((Math.sin((2 * Math.PI) * f)) * 6000.0d) + 0.5d));
 			long dt = (long)((3600.0d/quantity) * 1000.0d);
 			init = (int)((Math.random() * range) + li + 0.5d);
 			dest = (int)((Math.random() * range) + li + 0.5d);
@@ -52,7 +52,7 @@ public class Generator implements Runnable{
 			}
 			System.out.println("Estoy generando un carro");
 			System.out.println("Son las: " + hour + "q: " + quantity + "dt: " + dt);
-			veh = new Vehicle(id++, 1, d.initDijkstra(tolls, intersections, init, dest), tolls, intersections, register);
+			veh = new Vehicle(id++, 2, d.initDijkstra(tolls, intersections, init, dest), tolls, intersections, register);
 			t = new Thread(veh);
 			vSim.add(t);
 			t.start();
