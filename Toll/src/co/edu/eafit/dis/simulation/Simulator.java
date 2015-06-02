@@ -167,12 +167,12 @@ public class Simulator {
 				ints.setSource(true);
 //				System.out.println("Sources: " + ints.getId());
 			}
-			for(Toll t: tolls){
-				tSim.add(new Thread(t));
-			}
-			for(Thread th: tSim){
-				th.start();
-			}
+//			for(Toll t: tolls){
+//				tSim.add(new Thread(t));
+//			}
+//			for(Thread th: tSim){
+//				th.start();
+//			}
 		}catch(SQLException e){
 			e.printStackTrace();
 		}

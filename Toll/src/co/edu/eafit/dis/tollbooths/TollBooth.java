@@ -6,13 +6,14 @@ import co.edu.eafit.dis.graph.*;
 import co.edu.eafit.dis.employee.*;
 import co.edu.eafit.dis.entity.Vehicle;
 
-public abstract class TollBooth {
+public abstract class TollBooth implements Runnable{
 
 	Toll location;
 	Employee Manager;
 	Employee Operator;
 	int bid;
 	boolean status;
+	int type;
 	
 	public LinkedList<Vehicle> q;
 	
@@ -24,5 +25,9 @@ public abstract class TollBooth {
 	public void recieveVehicle(Vehicle vehicle){
 		q.add(vehicle);
 		System.out.println("Agregado y frenado: " + vehicle.getUserid());
+	}
+	
+	public int getType(){
+		return type;
 	}
 }

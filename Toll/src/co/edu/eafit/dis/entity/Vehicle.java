@@ -26,8 +26,9 @@ public class Vehicle implements Runnable{
 	private ArrayList<Toll> tolls;
 	private ArrayList<Intersection> intersections;
 	private Register register;
+	private boolean visited;
 	
-	public void run(){
+	public void run(){		
 		location = Integer.parseInt(path.get(0).name);
 		path.remove(0);
 		Node last = null;
@@ -39,8 +40,10 @@ public class Vehicle implements Runnable{
 				break;
 			}
 		}
+		
 		int next;
 		while(!path.isEmpty()){
+			visited = false;
 			next = Integer.parseInt(path.get(0).name);
 			if(next < tolls.size()+1){
 				for(Toll t: tolls){
@@ -53,11 +56,15 @@ public class Vehicle implements Runnable{
 						}
 						path.remove(0);
 						last = t;
-						synchronized (((Toll) last).b1) {
-							((Toll) last).recieveVehicle(this);
-						}
-						synchronized(last){
-						}
+						((Toll)last).recieveVehicle(this);	
+						System.out.println("Estoy esperando");
+						while(!this.visited){};
+						System.out.println("Pase");
+//						synchronized (((Toll) last).cashB) {
+//							((Toll) last).recieveVehicle(this);
+//						}
+//						synchronized(last){
+//						}
 						System.out.println("Hice mi transaccion");
 						break;
 					}
@@ -86,6 +93,14 @@ public class Vehicle implements Runnable{
 		this.tolls = tolls;
 		this.intersections = intersections;
 		this.register = register;
+	}
+	
+	public synchronized void setVisited(boolean visited){
+		this.visited = visited;
+	}
+	
+	public int getType(){
+		return type;
 	}
 	
 //	public void setInitialPoint(int initialPoint){

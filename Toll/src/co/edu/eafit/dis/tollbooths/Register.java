@@ -16,7 +16,7 @@ public class Register {
 		for(Toll toll: tolls){
 			if(tollid == toll.getId()){
 				System.out.println("Toll: " + tollid);
-				toll.b1.get(0).recieveVehicle(vehicle);
+				toll.cashB.get(0).recieveVehicle(vehicle);
 				break;
 			}
 		}
