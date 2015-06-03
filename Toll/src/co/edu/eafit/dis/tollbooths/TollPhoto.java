@@ -2,6 +2,7 @@ package co.edu.eafit.dis.tollbooths;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 
 import co.edu.eafit.dis.entity.Vehicle;
@@ -33,7 +34,7 @@ public class TollPhoto extends TollBooth {
 							System.exit(1);
 						}
 						pstate = connection.prepareStatement("INSERT INTO tollphoto VALUES ( 5, ?, ?, ?, ?)");
-						pstate.setTimestamp(1, new Timestamp(new Date().getTime()));
+						pstate.setTimestamp(1, new Timestamp(Calendar.getInstance().getTimeInMillis()));
 						pstate.setInt(2, location.getId());
 						pstate.setString(3, tmp.getPlate());
 						pstate.setInt(4, type);

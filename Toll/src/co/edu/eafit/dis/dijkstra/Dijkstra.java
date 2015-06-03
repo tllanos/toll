@@ -50,6 +50,9 @@ public class Dijkstra {
         for (Vertex vertex = target; vertex != null; vertex = vertex.previous)
             path.add(vertex);
         Collections.reverse(path);
+        for(Vertex v: path){
+        	System.out.println(v.name);
+        }
         return path;
     }
     

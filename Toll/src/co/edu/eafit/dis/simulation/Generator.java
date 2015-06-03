@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import co.edu.eafit.dis.dijkstra.Dijkstra;
 import co.edu.eafit.dis.entity.Vehicle;
@@ -15,7 +16,7 @@ import co.edu.eafit.dis.graph.Toll;
 
 public class Generator implements Runnable{
 	
-	private ArrayList<Thread> vSim;
+	private CopyOnWriteArrayList<Thread> vSim;
 	private int li, range, init, dest;
 	private Vehicle veh;
 	private Dijkstra d;
@@ -28,7 +29,7 @@ public class Generator implements Runnable{
 	private Statement statement;
 	private ResultSet rs;
 	
-	public Generator(ArrayList<Thread> vSim, 
+	public Generator(CopyOnWriteArrayList<Thread> vSim, 
 			ArrayList<Intersection> intersections, 
 			ArrayList<Toll> tolls, 
 			Register register){
@@ -76,11 +77,12 @@ public class Generator implements Runnable{
 			System.out.println("Estoy generando un carro");
 			System.out.println("Son las: " + hour + "q: " + quantity + "dt: " + dt);
 			//
-			int nran = (int)(Math.random() * 5.0d + 0.5d);
+			int nran = (int)((Math.random() * 5.0d) + 0.5d);
 			String platetmp = null, query;
 			int utmp = 0, max = 0, sensortmp = 0;
 			//nran = 2;
 			switch(nran){
+				default:
 				case 1:
 					System.out.println("CARRO CASH");
 					veh = new Vehicle(0, 0, null, 1, d.initDijkstra(tolls, intersections, init, dest), tolls, intersections);
@@ -167,7 +169,9 @@ public class Generator implements Runnable{
 			}
 			//
 			t = new Thread(veh);
-			vSim.add(t);
+			synchronized(vSim){
+				vSim.add(t);
+			}
 			t.start();
 			try {
 				Thread.sleep(dt);

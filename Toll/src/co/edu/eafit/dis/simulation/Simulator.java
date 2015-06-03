@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import co.edu.eafit.dis.graph.Intersection;
 import co.edu.eafit.dis.graph.Toll;
@@ -21,8 +22,7 @@ public class Simulator {
 	private Statement st;
 	private ResultSet rs;
 	private Connection connection;
-	private ArrayList<Thread> vSim;
-	private ArrayList<Thread> tSim;
+	private CopyOnWriteArrayList<Thread> vSim;
 	private ArrayList<Toll> tolls;
 	private ArrayList<Intersection> intersections;
 	private String query = null;
@@ -34,8 +34,7 @@ public class Simulator {
 		
 		tolls = new ArrayList<Toll>();
 		intersections = new ArrayList<Intersection>();
-		vSim = new ArrayList<Thread>();
-		tSim = new ArrayList<Thread>();
+		vSim = new CopyOnWriteArrayList<Thread>();
 		register = new Register();
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
@@ -77,19 +76,21 @@ public class Simulator {
 		while(/*g.checkstate()*/true){
 			synchronized(vSim){
 				for(Thread t: vSim){
-					if(!t.isAlive()){
-						try {
-							t.join();
-							System.out.println(vSim.size());
-							vSim.remove(t);
-							System.out.println(vSim.size());
-							System.out.println("Killed: " + t.getId());
-							t = null;
-							if(vSim.size() == 0){
-								break;
+					synchronized(t){
+						if(!t.isAlive()){
+							try {
+								t.join();
+								System.out.println(vSim.size());
+								vSim.remove(t);		
+								System.out.println(vSim.size());
+								System.out.println("Killed: " + t.getId());
+								t = null;
+								if(vSim.size() == 0){
+									break;
+								}
+							} catch (InterruptedException e) {
+								e.printStackTrace();
 							}
-						} catch (InterruptedException e) {
-							e.printStackTrace();
 						}
 					}
 				}
@@ -173,13 +174,13 @@ public class Simulator {
 	
 	private void generateGraph(){
 		try{
-			query = "SELECT tollid FROM toll";
+			query = "SELECT distinct tollid FROM toll";
 			rs = st.executeQuery(query);
 			while(rs.next()){
 				tolls.add(new Toll(rs.getInt(1),false,register));
 			}
 			rs.close();
-			query = "SELECT intid FROM intersection";
+			query = "SELECT distinct intid FROM intersection";
 			rs = st.executeQuery(query);
 			while(rs.next()){
 				intersections.add(new Intersection((rs.getInt(1)+tolls.size()),false));
@@ -187,14 +188,14 @@ public class Simulator {
 			rs.close();
 			for(Toll tollid: tolls){
 				pstate = connection.prepareStatement("SELECT intersection from connection where tollid = ?");
-				pstate.setString(1, Integer.toString(tollid.getId()));
+				pstate.setInt(1, tollid.getId());
 				rs = pstate.executeQuery();
 				while(rs.next()){
 					for(Intersection ints: intersections){
 						if(ints.getId() == (rs.getInt(1)+tolls.size())){
 							ints.connectTo(tollid);
 							ints.connectTo(tollid.getId());
-//							System.out.println("Toll: " + tollid.getId() + "-> Intersection: " + ints.getId());
+							System.out.println("Toll: " + tollid.getId() + "-> Intersection: " + ints.getId());
 							tollid.connectTo(ints);
 							tollid.connectTo(ints.getId());
 						}
@@ -206,12 +207,6 @@ public class Simulator {
 				ints.setSource(true);
 				System.out.println("Sources: " + ints.getId());
 			}
-//			for(Toll t: tolls){
-//				tSim.add(new Thread(t));
-//			}
-//			for(Thread th: tSim){
-//				th.start();
-//			}
 		}catch(SQLException e){
 			e.printStackTrace();
 		}

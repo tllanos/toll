@@ -2,6 +2,7 @@ package co.edu.eafit.dis.tollbooths;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -24,7 +25,7 @@ public class TollCash extends TollBooth {
 					System.out.println("TRANSACCION");
 					try {
 						pstate = connection.prepareStatement("INSERT INTO tollcash VALUES ( 5, ?, ?, ?)");
-						pstate.setTimestamp(1, new Timestamp(new Date().getTime()));
+						pstate.setTimestamp(1, new Timestamp(Calendar.getInstance().getTimeInMillis()));
 						pstate.setInt(2, location.getId());
 						pstate.setInt(3, type);
 						pstate.execute();
