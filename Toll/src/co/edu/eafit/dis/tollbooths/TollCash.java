@@ -1,5 +1,8 @@
 package co.edu.eafit.dis.tollbooths;
 
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.LinkedList;
 
 import co.edu.eafit.dis.entity.Vehicle;
@@ -20,8 +23,15 @@ public class TollCash extends TollBooth {
 					tmp = q.poll();
 					System.out.println("TRANSACCION");
 					try {
-						Thread.sleep(10000);
+						pstate = connection.prepareStatement("INSERT INTO tollcash VALUES ( 5, ?, ?, ?)");
+						pstate.setTimestamp(1, new Timestamp(new Date().getTime()));
+						pstate.setInt(2, location.getId());
+						pstate.setInt(3, type);
+						pstate.execute();
+						Thread.sleep(30000);
 					} catch (InterruptedException e) {
+						e.printStackTrace();
+					} catch (SQLException e){
 						e.printStackTrace();
 					}
 					tmp.setVisited(true);

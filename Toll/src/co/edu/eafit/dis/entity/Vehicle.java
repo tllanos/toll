@@ -44,6 +44,8 @@ public class Vehicle implements Runnable{
 						if(last instanceof Intersection){
 							((Intersection) last).removeVehicle(this);
 						}else{
+							System.out.println("Esto sucedio");
+							Thread.dumpStack();
 							System.exit(1);
 						}
 						path.remove(0);
@@ -67,13 +69,15 @@ public class Vehicle implements Runnable{
 					if(i.getId() == next){
 						System.out.println("Ingresando a: " + next);
 						if(!(last instanceof Toll)){
+							System.out.println("Esto sucedio");
+							Thread.dumpStack();
 							System.exit(1);
 						}
 						path.remove(0);
 						i.addVehicle(this);
 						try {
 							System.out.println("transitando");
-							Thread.sleep(1000);
+							Thread.sleep(30000);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
@@ -101,6 +105,11 @@ public class Vehicle implements Runnable{
 		this.path = path;
 		this.tolls = tolls;
 		this.intersections = intersections;
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void setVisited(boolean visited){

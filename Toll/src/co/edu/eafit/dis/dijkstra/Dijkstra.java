@@ -88,7 +88,7 @@ public class Dijkstra {
     	}
     	
     	for(int i = 0; i < toll.size(); i++) {
-//    		System.out.println(toll.get(i).getId());
+//    		1System.out.println(toll.get(i).getId());
     		Edge edges[] = new Edge[toll.get(i).getConnectionInt().length];
     		int connection[] = toll.get(i).getConnectionInt();
     		for(int j = 0; j < toll.get(i).getConnectionInt().length; j++) {

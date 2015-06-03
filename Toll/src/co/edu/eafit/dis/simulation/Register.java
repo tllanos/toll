@@ -30,7 +30,7 @@ public class Register {
 	
 	public boolean exists(String plate){
 		for(Vehicle v: vehs){
-			if(v.getPlate().equals(plate)){
+			if(v.getPlate() != null && v.getPlate().equals(plate)){
 				return true;
 			}
 		}

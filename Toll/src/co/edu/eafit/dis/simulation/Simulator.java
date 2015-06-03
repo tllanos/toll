@@ -71,7 +71,7 @@ public class Simulator {
 		Worker worker = new Worker(connection, pstate, tolls, rs);
 		Thread threadw = new Thread(worker);
 		threadw.start();
-		Generator generator =  new Generator(vSim, intersections, tolls, register, connection);
+		Generator generator =  new Generator(vSim, intersections, tolls, register);
 		Thread threadg = new Thread(generator);
 		threadg.start();
 		while(/*g.checkstate()*/true){
@@ -204,7 +204,7 @@ public class Simulator {
 			rs.close();
 			for(Intersection ints: intersections.subList(0, 8)){
 				ints.setSource(true);
-//				System.out.println("Sources: " + ints.getId());
+				System.out.println("Sources: " + ints.getId());
 			}
 //			for(Toll t: tolls){
 //				tSim.add(new Thread(t));
@@ -215,47 +215,5 @@ public class Simulator {
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
-	}
-	
-	private void generateVehicle(/*double value*/){
-
-		
-//		valueFunction = (int)(Math.sin(value) * 100);
-//		
-//		String query = "SELECT userid, type FROM users LIMIT 0,"
-//				+ valueFunction;
-//		try {
-//			rs = st.executeQuery(query);
-//			int userid, type;
-//			while(rs.next()) {
-//				userid = rs.getInt("userid");
-//				type = rs.getInt("type");
-//				// System.out.println("User ID: " + userid + " Type: " + type);
-//				users.add(new Vehicle(userid,type));
-//			}
-//			rs.close();
-//		} catch(SQLException e) { 
-//			System.out.println(e); 
-//		}
-	}
-
-	private void assignVehicles(){
-//		int random;
-//		for(Vehicle vehicle: users){
-//			random = (int)(Math.random()* 8);
-//			vehicle.setInitialPoint(random);
-//			random = (int)(Math.random()* 8);
-//			if(vehicle.getInitialPoint() == random){
-//				while(vehicle.getInitialPoint() == random){	
-//					random = (int)(Math.random()* 8);
-//				}
-//				vehicle.setDestination(random);
-//			}else{
-//				vehicle.setDestination(random);
-//			}
-//		}
-//		
-//		
-//	}
 	}
 }
