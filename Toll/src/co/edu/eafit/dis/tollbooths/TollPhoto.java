@@ -28,7 +28,8 @@ public class TollPhoto extends TollBooth {
 						query = "SELECT funds FROM users where userid = "+tmp.getUserid()+";";
 						rs = st.executeQuery(query);
 						rs.next();
-						if(rs.getInt(1) < 5){
+						int fund = rs.getInt(1);
+						if(fund < 5){
 							System.out.println("Esto sucedio");
 							Thread.dumpStack();
 							System.exit(1);
@@ -39,6 +40,12 @@ public class TollPhoto extends TollBooth {
 						pstate.setString(3, tmp.getPlate());
 						pstate.setInt(4, type);
 						pstate.execute();
+						
+						query = "UPDATE  users " +
+								"SET funds = " + (fund-5.0d) + 
+								"WHERE userid = " + tmp.getUserid()+";";
+						st.execute(query);
+						
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
 						e.printStackTrace();

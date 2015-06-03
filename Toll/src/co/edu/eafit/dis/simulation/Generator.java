@@ -95,6 +95,7 @@ public class Generator implements Runnable{
 							rs = statement.executeQuery("SELECT userid, sensorid FROM users where type = 1 ORDER BY RAND() LIMIT 1;");
 							rs.next();
 							utmp = rs.getInt(1);
+							System.out.println(utmp);
 							sensortmp = rs.getInt(2);
 						}while(register.exists(sensortmp));
 					} catch (SQLException e) {

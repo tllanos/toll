@@ -27,17 +27,25 @@ public class TollScanner extends TollBooth{
 						query = "SELECT funds FROM users where userid = "+tmp.getUserid()+";";
 						rs = st.executeQuery(query);
 						rs.next();
-						if(rs.getInt(1) < 5){
+						int fund = rs.getInt(1);
+						if(fund < 5){
 							System.out.println("Esto sucedio");
 							Thread.dumpStack();
 							System.exit(1);
 						}
+						
 						pstate = connection.prepareStatement("INSERT INTO tollsensor VALUES ( 5, ?, ?, ?, ?)");
 						pstate.setTimestamp(1, new Timestamp(Calendar.getInstance().getTimeInMillis()));
 						pstate.setInt(2, location.getId());
 						pstate.setInt(3, tmp.getSensorId());
 						pstate.setInt(4, type);
 						pstate.execute();
+						
+						query = "UPDATE  users " +
+								"SET funds = " + (fund-5.0d) + 
+								"WHERE userid = " + tmp.getUserid()+";";
+						st.execute(query);
+						
 						Thread.sleep(15000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
