@@ -12,11 +12,12 @@ import java.util.Date;
 
 import co.edu.eafit.dis.graph.Intersection;
 import co.edu.eafit.dis.graph.Toll;
-import co.edu.eafit.dis.tollbooths.Register;
+import co.edu.eafit.dis.graphics.GUI;
 import co.edu.eafit.dis.dijkstra.Dijkstra;
 import co.edu.eafit.dis.entity.Vehicle;
 
 public class Simulator {
+	private boolean running;
 	private Statement st;
 	private ResultSet rs;
 	private Connection connection;
@@ -27,6 +28,7 @@ public class Simulator {
 	private String query = null;
 	private PreparedStatement pstate = null;
 	private Register register;
+	private GUI g;
 	
 	public Simulator() {
 		
@@ -34,7 +36,7 @@ public class Simulator {
 		intersections = new ArrayList<Intersection>();
 		vSim = new ArrayList<Thread>();
 		tSim = new ArrayList<Thread>();
-		register = new Register(tolls);
+		register = new Register();
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql://localhost/tollcontrol?"
@@ -48,31 +50,55 @@ public class Simulator {
 		}catch(SQLException e) { 
 			e.printStackTrace(); 
 		}
-		simulate();
+//		g = new GUI();
+//		while(!g.checkstate()){
+//			try {
+//				Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
+		Driver();
 	}
 	
+	public void Driver(){
+		simulate();
+	}
+		
 	public void simulate() {
 		//Start
 		generateGraph();
 		Worker worker = new Worker(connection, pstate, tolls, rs);
 		Thread threadw = new Thread(worker);
 		threadw.start();
-		Generator generator =  new Generator(vSim, intersections, tolls, register);
+		Generator generator =  new Generator(vSim, intersections, tolls, register, connection);
 		Thread threadg = new Thread(generator);
 		threadg.start();
-		while(true){
-//			for(Thread t: vSim){
-//				try {
-//					t.join();
-//					System.out.println("Matando a " + t.getId());
-//					synchronized(t){
-//						vSim.remove(t);
-//					}
-//					System.out.println("Fue destruido");
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//			}
+		while(/*g.checkstate()*/true){
+			synchronized(vSim){
+				for(Thread t: vSim){
+					if(!t.isAlive()){
+						try {
+							t.join();
+							System.out.println(vSim.size());
+							vSim.remove(t);
+							System.out.println(vSim.size());
+							System.out.println("Killed: " + t.getId());
+							t = null;
+							if(vSim.size() == 0){
+								break;
+							}
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

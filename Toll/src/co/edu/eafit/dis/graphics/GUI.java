@@ -13,6 +13,8 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 public class GUI implements ActionListener {
+	private boolean quit;
+	public boolean state;
 	private JFrame frame;
 	private JButton btnStart, btnStop, btnClear;
 	JTextArea txtRel, txtOutput;
@@ -64,6 +66,15 @@ public class GUI implements ActionListener {
 	    frame.pack();
 	    frame.setLocationRelativeTo(null);
 	    frame.setVisible(true);
+	    state = false;
+	    quit = false;
+	    
+	    frame.addWindowListener(new java.awt.event.WindowAdapter() {
+	    	@Override
+    	    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+	    		GUI.this.setQuit();
+	    	}
+	    });
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -71,11 +82,13 @@ public class GUI implements ActionListener {
         	btnClear.setEnabled(false);
         	btnStart.setEnabled(false);
         	btnStop.setEnabled(true);
+        	state = true;
             // action
         }
         if (e.getSource() == btnStop) {
         	btnStop.setEnabled(false);
         	btnClear.setEnabled(true);
+        	state = false;
             // action
         }
         if (e.getSource() == btnClear) {
@@ -93,4 +106,16 @@ public class GUI implements ActionListener {
 	 public void setTextRel(String text) {
 	 	txtRel.setText(text);
 	 }
+
+	public boolean checkstate() {
+		return state;
+	}
+	
+	public void setQuit(){
+		quit = true;
+	}
+
+	public boolean quit() {
+		return false;
+	}
 }

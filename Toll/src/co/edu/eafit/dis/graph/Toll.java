@@ -3,7 +3,7 @@ package co.edu.eafit.dis.graph;
 import java.util.ArrayList;
 
 import co.edu.eafit.dis.entity.Vehicle;
-import co.edu.eafit.dis.tollbooths.Register;
+import co.edu.eafit.dis.simulation.Register;
 import co.edu.eafit.dis.tollbooths.TollBooth;
 import co.edu.eafit.dis.tollbooths.TollCash;
 import co.edu.eafit.dis.tollbooths.TollPhoto;

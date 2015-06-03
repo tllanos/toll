@@ -5,7 +5,6 @@ import co.edu.eafit.dis.simulation.Simulator;
 
 public class Main {
 	public static void main(String ... args) {
-		GUI g = new GUI();
 		Simulator s = new Simulator();
 	}
 }
