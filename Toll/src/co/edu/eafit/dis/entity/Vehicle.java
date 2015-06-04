@@ -36,11 +36,11 @@ public class Vehicle implements Runnable{
         path.remove(0);
         Node last = null;
         for(Intersection i: intersections){
-	        if(location == i.getId()){
-	                i.addVehicle(this);
-	                last = i;
-	                break;
-	        }
+                if(location == i.getId()){
+                        i.addVehicle(this);
+                        last = i;
+                        break;
+                }
         }
         int next;
         while(!path.isEmpty()){
@@ -132,7 +132,7 @@ public class Vehicle implements Runnable{
         } catch (InterruptedException e) {
                 System.out.println("Hubo un error "
                                 + "irrecuperable en la simulacion");
-                System.exit(1);                 
+                System.exit(1);
         }
     }
 
@@ -141,7 +141,7 @@ public class Vehicle implements Runnable{
      * @param visited true si completo.
      */
     public void setVisited(boolean visited){
-    	this.visited = visited;
+        this.visited = visited;
     }
 
     /**

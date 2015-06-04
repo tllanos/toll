@@ -60,18 +60,18 @@ public class Dijkstra {
         while (!vertexQueue.isEmpty()) {
             Vertex u = vertexQueue.poll();
         // Visit each edge exiting u
-	        for (Edge e : u.adjacencies){
-	            Vertex v = e.target;
-	            double weight = e.weight;
-	            double distanceThroughU = u.minDistance + weight;
-	            if (distanceThroughU < v.minDistance) {
-	                vertexQueue.remove(v);
-	                v.minDistance = distanceThroughU ;
-	                v.previous = u;
-	                vertexQueue.add(v);
-	            }
-	        }
-        }	
+                for (Edge e : u.adjacencies){
+                    Vertex v = e.target;
+                    double weight = e.weight;
+                    double distanceThroughU = u.minDistance + weight;
+                    if (distanceThroughU < v.minDistance) {
+                        vertexQueue.remove(v);
+                        v.minDistance = distanceThroughU ;
+                        v.previous = u;
+                        vertexQueue.add(v);
+                    }
+                }
+        }
     }
 
     /**
@@ -110,7 +110,7 @@ public class Dijkstra {
     public Vertex matchVertex(String id){
         for (Vertex vert: v){
             if(vert.name.equals(id)){
-            	return vert;
+                return vert;
             }
         }
         return null;
@@ -128,7 +128,7 @@ public class Dijkstra {
     public List<Vertex> initDijkstra(ArrayList<Toll> toll,
         ArrayList<Intersection> inter,
         int init, int dest) {
-		v = new ArrayList<Vertex>();
+                v = new ArrayList<Vertex>();
 
         for(int i = 0; i < toll.size(); i++) {
             v.add(new Vertex(toll.get(i).getId() + ""));
@@ -142,7 +142,7 @@ public class Dijkstra {
             Edge edges[] = new Edge[toll.get(i).getConnectionInt().length];
             int connection[] = toll.get(i).getConnectionInt();
             for(int j = 0; j<toll.get(i).getConnectionInt().length; j++){
-            	edges[j] = new Edge(matchVertex(
+                edges[j] = new Edge(matchVertex(
                     Integer.toString(connection[j])),
                     toll.get(j).getFlow());
             }
@@ -153,7 +153,7 @@ public class Dijkstra {
             Edge edges[] = new Edge[inter.get(i).getConnectionInt().length];
             int connection[] = inter.get(i).getConnectionInt();
             for(int j = 0; j<inter.get(i).getConnectionInt().length; j++){
-            	edges[j] = new Edge(matchVertex(
+                edges[j] = new Edge(matchVertex(
                     Integer.toString(connection[j])),
                     getIntFlow(connection[j], toll));
             }

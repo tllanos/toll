@@ -74,7 +74,7 @@ public class Toll extends Node {
             scannerB.get(0).q.add(vehicle);
             break;
         case 3:
-        	photoB.get(0).q.add(vehicle);
+                photoB.get(0).q.add(vehicle);
             break;
         }
     }

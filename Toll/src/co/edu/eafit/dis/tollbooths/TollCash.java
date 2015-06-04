@@ -24,51 +24,51 @@ import co.edu.eafit.dis.graph.Toll;
  * @see java.lang.Runnable
  */
 public class TollCash extends TollBooth {
-	
-	/**
-	 * Simplemente construye al objeto, dandole el tipo y lugar,
-	 * y continua con la construccion en el constructor del
-	 * padre.
-	 * @param location el peaje en que se encuentra.
-	 * @see TollBooth#TollBooth(Toll)
-	 */
-	public TollCash(Toll location){
-		super(location);
-		type = 1;
-	}
-	
-	/**
-	 * Ver {@link TollCash}
-	 */
-	public void run(){
-		Vehicle tmp;
-		while(true){
-			synchronized(q){
-				while(!q.isEmpty()){
-					tmp = q.poll();
-					try {
-						pstate = connection.prepareStatement(
-								"INSERT INTO tollcash VALUES ( 5, ?, ?, ?)");
-						pstate.setTimestamp(1, 
-								new Timestamp(Calendar.getInstance().
-									getTimeInMillis()));
-						pstate.setInt(2, location.getId());
-						pstate.setInt(3, type);
-						pstate.execute();
-						Thread.sleep(30000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					} catch (SQLException e){
-						e.printStackTrace();
-					}
-					tmp.setVisited(true);
-				}
-			}
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+        
+    /**
+     * Simplemente construye al objeto, dandole el tipo y lugar,
+     * y continua con la construccion en el constructor del
+     * padre.
+     * @param location el peaje en que se encuentra.
+     * @see TollBooth#TollBooth(Toll)
+     */
+    public TollCash(Toll location){
+        super(location);
+        type = 1;
+    }
+        
+    /**
+     * Ver {@link TollCash}
+     */
+    public void run(){
+        Vehicle tmp;
+        while(true){
+            synchronized(q){
+                while(!q.isEmpty()){
+                    tmp = q.poll();
+                    try {
+                        pstate = connection.prepareStatement(
+                                 "INSERT INTO tollcash VALUES ( 5, ?, ?, ?)");
+                        pstate.setTimestamp(1, 
+                                            new Timestamp(Calendar.getInstance().
+                                                          getTimeInMillis()));
+                        pstate.setInt(2, location.getId());
+                        pstate.setInt(3, type);
+                        pstate.execute();
+                        Thread.sleep(30000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (SQLException e){
+                        e.printStackTrace();
+                    }
+                    tmp.setVisited(true);
+                }
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
