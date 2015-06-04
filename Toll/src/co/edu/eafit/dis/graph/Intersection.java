@@ -15,35 +15,35 @@ import co.edu.eafit.dis.entity.Vehicle;
  * @see Node
  */
 public class Intersection extends Node{
-	
-	private ArrayList<Vehicle> vehicles;
-	
-	/**
-	 * Constructor de una Interseccion,
-	 * inicializa a vehicles, la coleccion
-	 * carros que contiene el nodo.
-	 * @param id
-	 * @param source
-	 */
-	public Intersection(int id, boolean source){
-		super(id, source);
-		vehicles =  new ArrayList<Vehicle>();
-	}
-	
-	/**
-	 * Anade un vehiculo a la coleccion de vehiculos.
-	 * @param vehicle el vehiculo a añadir
-	 */
-	public void addVehicle(Vehicle vehicle){
-		vehicles.add(vehicle);
-	}
-	
-	/**
-	 * Elemina a un vehiculo de la coleccion.
-	 * @param vehicle el vehiculo a remover
-	 */
-	public void removeVehicle(Vehicle vehicle){
-		vehicles.remove(vehicle);
-	}
-	
+
+    private ArrayList<Vehicle> vehicles;
+
+    /**
+     * Constructor de una Interseccion,
+     * inicializa a vehicles, la coleccion
+     * carros que contiene el nodo.
+     * @param id
+     * @param source
+     */
+    public Intersection(int id, boolean source){
+        super(id, source);
+        vehicles =  new ArrayList<Vehicle>();
+    }
+
+    /**
+     * Anade un vehiculo a la coleccion de vehiculos.
+     * @param vehicle el vehiculo a añadir
+     */
+    public void addVehicle(Vehicle vehicle){
+        vehicles.add(vehicle);
+    }
+
+    /**
+     * Elemina a un vehiculo de la coleccion.
+     * @param vehicle el vehiculo a remover
+     */
+    public void removeVehicle(Vehicle vehicle){
+        vehicles.remove(vehicle);
+    }
+
 }

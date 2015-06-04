@@ -16,10 +16,10 @@ import co.edu.eafit.dis.entity.Vehicle;
  * la cual, como es usual en colombia y diferentes partes del
  * mundo, se satura si hay mucho flujo en
  * cualquiera de los sentidos.
- * 
- * Una casita ademas siempre debe existir ligada a un peaje,
+ * <p>
+ * Una caseta ademas siempre debe existir ligada a un peaje,
  * de lo contrario no tendria sentido.
- * 
+ * <p>
  * Ahora, has de decirse, esta clase es una implementacion de
  * la interfaz Runnable, pues, para poder concurrentemente simular
  * a todas las casetas habria que hacerse un procesamiento secuencial
@@ -52,11 +52,14 @@ public abstract class TollBooth implements Runnable{
 		q = new LinkedList<Vehicle>();
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			connection = DriverManager.getConnection("jdbc:mysql://toll.cqkduygrcpmt.us-east-1.rds.amazonaws.com:3306/tollcontrol?"
-			          + "user=root&password=rootroot");
+			connection = DriverManager.getConnection("jdbc:mysql:"
+					+ "//toll.cqkduygrcpmt.us-east-1.rds.amazonaws.com:"
+					+ "3306/tollcontrol?"
+			        + "user=root&password=rootroot");
 			st = connection.createStatement();
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("Error connecting to the database");
+			System.exit(1);
 		}
 	}
 	
@@ -68,7 +71,6 @@ public abstract class TollBooth implements Runnable{
 	 */
 	public synchronized void recieveVehicle(Vehicle vehicle){
 		q.add(vehicle);
-		System.out.println("Agregado y frenado: " + vehicle.getUserid());
 		q.notify();
 	}
 	

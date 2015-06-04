@@ -15,11 +15,11 @@ import co.edu.eafit.dis.graph.Toll;
  * los usuarios haciendo algunas consultas a la base de datos,
  * pero, no es tan significativo como para comprometer
  * la velocidad y eficacia de la simulacion. 
- * 
+ * <p>
  * Esencialmente lo que hace la clase, al ser instanciada y puesta en
  * marcha, es constantemente revisar si tiene vehiculos por procesar
- * y si es del caso los procesa, primero creando la consulta en la base de datos
- * y luego ya esperando el tiempo que, segun lo estudiado,
+ * y si es del caso los procesa, primero creando la consulta en 
+ * la base de datos y luego ya esperando el tiempo que, segun lo estudiado,
  * toma recorrer un peaje.
  * @author tllanos, ccorre20, icardena
  * @see TollCash
@@ -49,20 +49,22 @@ public class TollScanner extends TollBooth{
 			synchronized(q){
 				while(!q.isEmpty()){
 					tmp = q.poll();
-					System.out.println("TRANSACCION");
 					try {
-						query = "SELECT funds FROM users where userid = "+tmp.getUserid()+";";
+						query = "SELECT funds FROM users where userid = "
+								+tmp.getUserid()+";";
 						rs = st.executeQuery(query);
 						rs.next();
 						int fund = rs.getInt(1);
 						if(fund < 5){
-							System.out.println("Esto sucedio");
-							Thread.dumpStack();
-							System.exit(1);
+							System.out.println("Un usario debe dinero");
 						}
 						
-						pstate = connection.prepareStatement("INSERT INTO tollsensor VALUES ( 5, ?, ?, ?, ?)");
-						pstate.setTimestamp(1, new Timestamp(Calendar.getInstance().getTimeInMillis()));
+						pstate = connection.prepareStatement(
+								"INSERT INTO tollsensor "
+								+ "VALUES ( 5, ?, ?, ?, ?)");
+						pstate.setTimestamp(1, 
+								new Timestamp(Calendar.getInstance()
+										.getTimeInMillis()));
 						pstate.setInt(2, location.getId());
 						pstate.setInt(3, tmp.getSensorId());
 						pstate.setInt(4, type);
@@ -80,7 +82,6 @@ public class TollScanner extends TollBooth{
 						e.printStackTrace();
 					}
 					tmp.setVisited(true);
-					System.out.println("Transacción completada");
 				}
 			}
 			try {

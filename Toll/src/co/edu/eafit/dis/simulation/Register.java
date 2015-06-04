@@ -33,8 +33,8 @@ public class Register {
 	
 	/**
 	 * Elimina un objeto especifico de tipo Vehiculo de la lista "vehs"
-	 * (i.e., elimina un vehiculo de la simulación, lo que significa que el mismo
-	 * ha alcanzado su destino).
+	 * (i.e., elimina un vehiculo de la simulación, lo que 
+	 * significa que el mismo ha alcanzado su destino).
 	 * 
 	 * @param veh el vehiculo a eliminar
 	 */
@@ -50,8 +50,8 @@ public class Register {
 	 * de cada vehiculo.
 	 * 
 	 * @param sensorid el id del sensor a buscar
-	 * @return Verdadero si un objeto de tipo vehiculo existe en la lista "vehs"
-	 * y falso en caso contrario.
+	 * @return Verdadero si un objeto de tipo vehiculo existe en 
+	 * la lista "vehs" y falso en caso contrario.
 	 */
 	public boolean exists(int sensorid){
 		for(Vehicle v: vehs){
@@ -70,8 +70,8 @@ public class Register {
 	 * de cada vehiculo.
 	 *  
 	 * @param plate la placa a cotejar.
-	 * @return Verdadero si un objeto de tipo vehiculo existe en la lista "vehs"
-	 * y falso en caso contrario.
+	 * @return Verdadero si un objeto de tipo vehiculo existe en 
+	 * la lista "vehs" y falso en caso contrario.
 	 */
 	public boolean exists(String plate){
 		for(Vehicle v: vehs){

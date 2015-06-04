@@ -21,79 +21,80 @@ import co.edu.eafit.dis.tollbooths.TollScanner;
  * @see co.edu.eafit.dis.tollbooths.TollPhoto
  */
 public class Toll extends Node {
-	
-	public ArrayList<TollCash> cashB;
-	public ArrayList<TollScanner> scannerB;
-	public ArrayList<TollPhoto> photoB;
-	private ArrayList<Thread> boothP;
-	private int flow;
-	
-	/**
-	 * Constructor del Toll, este se encargara de crear el nuevo
-	 * peaje, y ademas, inicializar dentro de si a las casetas,
-	 * que se encargaran de hacer el procesamiento como tal de los vehiculos.
-	 * @param id
-	 * @param source
-	 */
-	public Toll(int id, boolean source){
-		super(id, source);
-		cashB = new ArrayList<TollCash>();
-		cashB.add(new TollCash(this));
-		scannerB = new ArrayList<TollScanner>();
-		scannerB.add(new TollScanner(this));
-		photoB = new ArrayList<TollPhoto>();
-		photoB.add(new TollPhoto(this));
-		boothP = new ArrayList<Thread>();
-		
-		for(TollBooth c : cashB){
-			boothP.add(new Thread(c));			
-		}
-		for(TollBooth c : scannerB){
-			boothP.add(new Thread(c));
-		}
-		for(TollBooth c : photoB){
-			boothP.add(new Thread(c));
-		}
-		for(Thread t : boothP){
-			t.start();
-		}
-	}
-	
-	/**
-	 * Este metodo "recibe a un vehiculo" y dependiendo de
-	 * su comportamiento y tipo lo mete a una de sus casetas.
-	 * @param vehicle el vehiculo a procesar
-	 */
-	public void recieveVehicle(Vehicle vehicle){
-		System.out.println("Recibido");
-		switch(vehicle.getType()){
-		case 1:
-			cashB.get(0).q.add(vehicle);
-			break;
-		case 2:
-			scannerB.get(0).q.add(vehicle);
-			break;
-		case 3:
-			photoB.get(0).q.add(vehicle);
-			break;
-		}
-	}
-	
-	/**
-	 * Este metodo asigna el "flujo" al objeto, que es calculado por la simulacion
-	 * y este se encarga de darle sentido al analisis de dijkstra.
-	 * @param f el flujo
-	 */ 
-	public void setFlow(int f){
-		flow = f;
-	}
-	
-	/**
-	 * Retorna el flujo.
-	 * @return el flujo.
-	 */
-	public int getFlow() {
-		return flow;
-	}
-	
+
+    public ArrayList<TollCash> cashB;
+    public ArrayList<TollScanner> scannerB;
+    public ArrayList<TollPhoto> photoB;
+    private ArrayList<Thread> boothP;
+    private int flow;
+
+    /**
+     * Constructor del Toll, este se encargara de crear el nuevo
+     * peaje, y ademas, inicializar dentro de si a las casetas,
+     * que se encargaran de hacer el procesamiento como tal
+     * de los vehiculos.
+     * @param id
+     * @param source
+     */
+    public Toll(int id, boolean source){
+        super(id, source);
+        cashB = new ArrayList<TollCash>();
+        cashB.add(new TollCash(this));
+        scannerB = new ArrayList<TollScanner>();
+        scannerB.add(new TollScanner(this));
+        photoB = new ArrayList<TollPhoto>();
+        photoB.add(new TollPhoto(this));
+        boothP = new ArrayList<Thread>();
+
+        for(TollBooth c : cashB){
+                boothP.add(new Thread(c));
+        }
+        for(TollBooth c : scannerB){
+                boothP.add(new Thread(c));
+        }
+        for(TollBooth c : photoB){
+                boothP.add(new Thread(c));
+        }
+        for(Thread t : boothP){
+                t.start();
+        }
+    }
+
+    /**
+     * Este metodo "recibe a un vehiculo" y dependiendo de
+     * su comportamiento y tipo lo mete a una de sus casetas.
+     * @param vehicle el vehiculo a procesar
+     */
+    public void recieveVehicle(Vehicle vehicle){
+        switch(vehicle.getType()){
+        case 1:
+            cashB.get(0).q.add(vehicle);
+            break;
+        case 2:
+            scannerB.get(0).q.add(vehicle);
+            break;
+        case 3:
+        	photoB.get(0).q.add(vehicle);
+            break;
+        }
+    }
+
+    /**
+     * Este metodo asigna el "flujo" al objeto, que es calculado
+     * por la simulacion y este se encarga de darle sentido
+     * al analisis de dijkstra.
+     * @param f el flujo
+     */
+    public void setFlow(int f){
+        flow = f;
+    }
+
+    /**
+     * Retorna el flujo.
+     * @return el flujo.
+     */
+    public int getFlow() {
+        return flow;
+    }
+
 }

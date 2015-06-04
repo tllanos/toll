@@ -15,7 +15,7 @@ import co.edu.eafit.dis.graph.Toll;
  * los usuarios haciendo algunas consultas a la base de datos,
  * pero, no es tan significativo como para comprometer
  * la velocidad y eficacia de la simulacion.
- *
+ * <p>
  * Esencialmente lo que hace la clase, al ser instanciada y puesta en
  * marcha, es constantemente revisar si tiene vehiculos por procesar
  * y si es del caso los procesa, primero creando la consulta en la base de datos
@@ -50,19 +50,21 @@ public class TollPhoto extends TollBooth {
 				while(!q.isEmpty()){
 					tmp = q.poll();
 					tmp.setVisited(true);
-					System.out.println("TRANSACCION");
 					try {
-						query = "SELECT funds FROM users where userid = "+tmp.getUserid()+";";
+						query = "SELECT funds FROM users where userid = "
+								+tmp.getUserid()+";";
 						rs = st.executeQuery(query);
 						rs.next();
 						int fund = rs.getInt(1);
 						if(fund < 5){
-							System.out.println("Esto sucedio");
-							Thread.dumpStack();
-							System.exit(1);
+							System.out.println("Un usuario debe dinero");
 						}
-						pstate = connection.prepareStatement("INSERT INTO tollphoto VALUES ( 5, ?, ?, ?, ?)");
-						pstate.setTimestamp(1, new Timestamp(Calendar.getInstance().getTimeInMillis()));
+						pstate = connection.prepareStatement(
+								"INSERT INTO tollphoto "
+								+ "VALUES ( 5, ?, ?, ?, ?)");
+						pstate.setTimestamp(1, 
+								new Timestamp(Calendar.getInstance().
+										getTimeInMillis()));
 						pstate.setInt(2, location.getId());
 						pstate.setString(3, tmp.getPlate());
 						pstate.setInt(4, type);
@@ -79,7 +81,6 @@ public class TollPhoto extends TollBooth {
 					} catch (SQLException e){
 						e.printStackTrace();
 					}
-					System.out.println("Transacción completada");
 				}
 			}
 			try {

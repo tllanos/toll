@@ -38,12 +38,13 @@ public class Generator implements Runnable{
 	 * Inicializa la conexión con la base de datos y asigna los valores
 	 * requeridos para dar inicio a la generación de vehiculos.
 	 * <p>
-	 * El proceso de generación de vehiculos usa la función seno como una forma
-	 * de controlar la cantidad de autos que serán creados. Para cumplir
-	 * con dicho objetivo, se calcula el porcentaje de tiempo transcurrido,
-	 * basado en el sistema 24h, el cual es multiplica por 2π. Luego, la función
-	 * |sin(Ө)| es aplicada al resultado de la operación anterior y finalmente
-	 * multiplicado por la cantidad máxima de vehiculos que se requiere producir. 
+	 * El proceso de generación de vehiculos usa la función seno 
+	 * como una forma de controlar la cantidad de autos que serán creados. 
+	 * Para cumplir con dicho objetivo, se calcula el porcentaje de 
+	 * tiempo transcurrido, basado en el sistema 24h, el cual es 
+	 * multiplica por 2π. Luego, la función |sin(Ө)| es aplicada 
+	 * al resultado de la operación anterior y finalmente multiplicado 
+	 * por la cantidad máxima de vehiculos que se requiere producir. 
 	 * 
 	 * @param vSim los "threads" para los carros.
 	 * @param intersections todas las intersecciones.
@@ -70,11 +71,14 @@ public class Generator implements Runnable{
 		this.tolls = tolls;
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
-			connection = DriverManager.getConnection("jdbc:mysql://toll.cqkduygrcpmt.us-east-1.rds.amazonaws.com:3306/tollcontrol?"
+			connection = DriverManager.getConnection("jdbc:mysql:"
+					+ "//toll.cqkduygrcpmt.us-east-1.rds.amazonaws.com:"
+					+ "3306/tollcontrol?"
 		              + "user=root&password=rootroot");
 			statement = connection.createStatement();
 		}catch(Exception e){
 			System.out.println("Error connecting to the database");
+			System.exit(1);
 		}
 	}
 	
@@ -86,17 +90,14 @@ public class Generator implements Runnable{
 			if(f == 0){
 				f = 12;
 			}
-			int quantity = Math.abs((int)(((Math.sin((2 * Math.PI) * f)) * 5940.0d) + 0.5d)) + 60;
+			int quantity = Math.abs((int)(((Math.sin((2 * Math.PI) * f))
+					* 5940.0d) + 0.5d)) + 60;
 			long dt = (long)((3600.0d/quantity) * 1000.0d);
 			init = (int)((Math.random() * (range-1)) + li);
-			System.out.println("init : "+ init);
 			dest = (int)((Math.random() * (range-1)) + li);
 			while(dest == init){
 				dest = (int)((Math.random() * (range-1)) + li);
 			}
-			System.out.println("dest : "+ dest);
-			System.out.println("Un vehiculo esta siendo generado");
-			System.out.println("Son las: " + hour + "q: " + quantity + "dt: " + dt);
 			int nran = (int)((Math.random() * 100.0d) + 0.5d);
 			String platetmp = null, query;
 			int utmp = 0, max = 0, sensortmp = 0;
@@ -113,64 +114,74 @@ public class Generator implements Runnable{
 			switch(nran){
 				default:
 				case 1:
-					System.out.println("Vehiculo que pagará en efectivo");
-					veh = new Vehicle(0, 0, null, 1, d.initDijkstra(tolls, intersections, init, dest), tolls, intersections);
+					veh = new Vehicle(0, 0, null, 1, d.initDijkstra(tolls, 
+						intersections, init, dest), tolls, intersections);
 					register.add(veh);
 					break;
 				case 2:
-					System.out.println("Vehiculo que usa sensor");
 					try {
 						do{
-							rs = statement.executeQuery("SELECT userid, sensorid FROM users where type = 1 ORDER BY RAND() LIMIT 1;");
+							rs = statement.executeQuery("SELECT userid, "
+									+ "sensorid FROM users where type = 1 "
+									+ "ORDER BY RAND() LIMIT 1;");
 							rs.next();
 							utmp = rs.getInt(1);
-							System.out.println(utmp);
 							sensortmp = rs.getInt(2);
 						}while(register.exists(sensortmp));
 					} catch (SQLException e) {
-						e.printStackTrace();
+						System.out.println("Hubo un error "
+								+ "irrecuperable en la simulacion");
+						System.exit(1);
 					}
-					veh = new Vehicle(utmp, sensortmp, null, 2, d.initDijkstra(tolls, intersections, init, dest), tolls, intersections);
+					veh = new Vehicle(utmp, sensortmp, null, 2, 
+							d.initDijkstra(tolls, intersections, init, dest), 
+							tolls, intersections);
 					register.add(veh);
 					break;
 				case 3:
-					System.out.println("Vehiculo que usa sensor");
 					try {
 						query = "SELECT MAX(userid) FROM users";
 						rs = statement.executeQuery(query);
 						rs.next();
 						max = rs.getInt(1);
 						max++;
-						query = "INSERT INTO users VALUES ("+max+" , "+max+" , 1 , "+max+" , NULL , 1000);";
+						query = "INSERT INTO users VALUES ("+max+" , "+max+" "
+								+ ", 1 , "+max+" , NULL , 1000);";
 						statement.execute(query);
 					} catch (SQLException e) {
-						e.printStackTrace();
+						System.out.println("Hubo un error "
+								+ "irrecuperable en la simulacion");
+						System.exit(1);
 					}
-					veh = new Vehicle(max, 0, platetmp, 2, d.initDijkstra(tolls, intersections, init, dest), tolls, intersections);
+					veh = new Vehicle(max, 0, platetmp, 2, 
+							d.initDijkstra(tolls, intersections, init, dest), 
+							tolls, intersections);
 					register.add(veh);
 					break;
 				case 4:
-					System.out.println("Vehiculo que pasará por caseta rápida");
 					try {
 						do{
-							rs = statement.executeQuery("SELECT userid, plate "
-														+ "FROM users "
-														+ "WHERE type = 2 "
-															+ "ORDER BY RAND() "
-															+ "LIMIT 1;");
+							rs = statement.executeQuery("SELECT userid, "
+									+ "plate FROM users "
+									+ "WHERE type = 2 "
+									+ "ORDER BY RAND() "
+									+ "LIMIT 1;");
 							if(!rs.next())
 								break;
 							utmp = rs.getInt(1);
 							platetmp = rs.getString(2);
 						}while(register.exists(platetmp));
 					} catch (SQLException e) {
-						e.printStackTrace();
+						System.out.println("Hubo un error "
+								+ "irrecuperable en la simulacion");
+						System.exit(1);
 					}
-					veh = new Vehicle(utmp, 0, platetmp, 3, d.initDijkstra(tolls, intersections, init, dest), tolls, intersections);
+					veh = new Vehicle(utmp, 0, platetmp, 3, 
+							d.initDijkstra(tolls, intersections, init, dest), 
+							tolls, intersections);
 					register.add(veh);
 					break;
 				case 5:
-					System.out.println("Vehiculo que pasará por caseta rápida");
 					try {
 						do{
 							int r;
@@ -184,7 +195,8 @@ public class Generator implements Runnable{
 								p += r;
 							}
 							platetmp = p;
-							query = "SELECT * FROM users where plate = '"+platetmp+"';";
+							query = "SELECT * FROM users "
+									+ "where plate = '"+platetmp+"';";
 							rs = statement.executeQuery(query);
 						}while(rs.isBeforeFirst());
 						query = "SELECT MAX(userid) FROM users";
@@ -192,12 +204,18 @@ public class Generator implements Runnable{
 						rs.next();
 						max = rs.getInt(1);
 						max++;
-						query = "INSERT INTO users VALUES ("+max+" , "+max+" , 2 , NULL, '"+platetmp+"' , 1000);";
+						query = "INSERT INTO users VALUES ("+max+" "
+								+ ", "+max+" , 2 , NULL, '"
+								+platetmp+"' , 1000);";
 						statement.execute(query);
 					} catch (SQLException e) {
-						e.printStackTrace();
+						System.out.println("Hubo un error "
+								+ "irrecuperable en la simulacion");
+						System.exit(1);
 					}
-					veh = new Vehicle(max, 0, platetmp, 3, d.initDijkstra(tolls, intersections, init, dest), tolls, intersections);
+					veh = new Vehicle(max, 0, platetmp, 3, 
+							d.initDijkstra(tolls, intersections, init, dest), 
+							tolls, intersections);
 					register.add(veh);
 					break;
 			}
@@ -206,10 +224,16 @@ public class Generator implements Runnable{
 				vSim.add(t);
 			}
 			t.start();
+			System.out.println("Generando un vehiculo en: " + init 
+					+ " con destino: " + dest);
+			System.out.println("El id del thread del vehiculo es: " 
+					+ t.getId());
 			try {
 				Thread.sleep(dt);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				System.out.println("Hubo un error "
+						+ "irrecuperable en la simulacion");
+				System.exit(1);
 			}
 		}
 	}

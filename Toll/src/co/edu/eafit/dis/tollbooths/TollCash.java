@@ -12,7 +12,7 @@ import co.edu.eafit.dis.graph.Toll;
  * efectivo, y por tanto es ligeramente mas sencilla que las otras,
  * pero en su funcionalidad, esencialemente, hace todo el manejo de
  * los usuarios sin tener que hacer varias consultas en la base de datos.
- * 
+ * <p>
  * Esencialmente lo que hace la clase, al ser instanciada y puesta en
  * marcha, es constantemente revisar si tiene vehiculos por procesar
  * y si es del caso los procesa, primero creando la consulta en la base de datos
@@ -46,10 +46,12 @@ public class TollCash extends TollBooth {
 			synchronized(q){
 				while(!q.isEmpty()){
 					tmp = q.poll();
-					System.out.println("TRANSACCION");
 					try {
-						pstate = connection.prepareStatement("INSERT INTO tollcash VALUES ( 5, ?, ?, ?)");
-						pstate.setTimestamp(1, new Timestamp(Calendar.getInstance().getTimeInMillis()));
+						pstate = connection.prepareStatement(
+								"INSERT INTO tollcash VALUES ( 5, ?, ?, ?)");
+						pstate.setTimestamp(1, 
+								new Timestamp(Calendar.getInstance().
+									getTimeInMillis()));
 						pstate.setInt(2, location.getId());
 						pstate.setInt(3, type);
 						pstate.execute();
@@ -60,8 +62,6 @@ public class TollCash extends TollBooth {
 						e.printStackTrace();
 					}
 					tmp.setVisited(true);
-					System.out.println(tmp);
-					System.out.println("Transacción completada");
 				}
 			}
 			try {

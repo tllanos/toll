@@ -19,7 +19,6 @@ import co.edu.eafit.dis.graph.Toll;
  * @author tllanos, ccorre20, icardena
  */
 public class Simulator {
-	//private boolean running;
 	private Statement st;
 	private ResultSet rs;
 	private Connection connection;
@@ -29,7 +28,6 @@ public class Simulator {
 	private String query = null;
 	private PreparedStatement pstate = null;
 	private Register register;
-	//private GUI g;
 	
 	/**
 	 * Inicializa la conección a la base de datos y asigna los valores
@@ -52,28 +50,24 @@ public class Simulator {
 		intersections = new ArrayList<Intersection>();
 		vSim = new CopyOnWriteArrayList<Thread>();
 		register = new Register();
+		System.out.println("Preparando conexion a la base de datos");
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
-			connection = DriverManager.getConnection("jdbc:mysql://toll.cqkduygrcpmt.us-east-1.rds.amazonaws.com:3306/tollcontrol?"
-		              + "user=root&password=rootroot");
+			connection = DriverManager.getConnection("jdbc:mysql:"
+					+ "//toll.cqkduygrcpmt.us-east-1.rds.amazonaws.com:"
+					+ "3306/tollcontrol?"
+		            + "user=root&password=rootroot");
 		}catch(Exception e){
 			System.out.println("Error connecting to the database");
+			System.exit(1);
 		}
 		
 		try{
 			st = connection.createStatement();
 		}catch(SQLException e) { 
-			e.printStackTrace(); 
+			System.out.println("Hubo un error irrecuperable en la simulacion");
+			System.exit(1);
 		}
-//		g = new GUI();
-//		while(!g.checkstate()){
-//			try {
-//				Thread.sleep(100);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//		}
-		simulate();
 	}
 	
 	/**
@@ -89,38 +83,44 @@ public class Simulator {
 		Worker worker = new Worker(connection, pstate, tolls, rs);
 		Thread threadw = new Thread(worker);
 		threadw.start();
-		Generator generator =  new Generator(vSim, intersections, tolls, register);
+		Generator generator =  new Generator(vSim, intersections, 
+				tolls, register);
 		Thread threadg = new Thread(generator);
 		threadg.start();
-		while(/*g.checkstate()*/true){
+		while(true){
 			synchronized(vSim){
 				for(Thread t: vSim){
 					synchronized(t){
-						if(!t.isAlive()){ //Evalua si el hilo es o no requerido.
+						//Evalua si el hilo es o no requerido.
+						if(!t.isAlive()){
 							try {
-								t.join(); //Destruye el objeto de tipo "Thread".
-								System.out.println(vSim.size());
+								//Destruye el objeto de tipo "Thread".
+								t.join(); 
 								vSim.remove(t);		
-								System.out.println(vSim.size());
-								System.out.println("Killed: " + t.getId());
+								System.out.println("El thread: " + t.getId() 
+										+ " ha llegado a su destino");
 								t = null;
 								if(vSim.size() == 0){
 									break;
 								}
 							} catch (InterruptedException e) {
-								e.printStackTrace();
+								System.out.println("Hubo un error "
+										+ "irrecuperable en la simulacion");
+								System.exit(1);
 							}
 						}
 					}
 				}
 			}
-			//SO requiere especificar una pausa entre los cilos.
+			//Se requiere especificar una pausa entre los cilos.
 			//Si dicha pausa no es especificada, el programa no correra
 			//de forma apropiada.
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				System.out.println("Hubo un error "
+						+ "irrecuperable en la simulacion");
+				System.exit(1);
 			}
 		}
 	}
@@ -140,11 +140,13 @@ public class Simulator {
 		public void run(){
 			while(true){
 				assignFlow();
-				System.out.println("Update!");
+				System.out.println("Se han recalculado los flujos!");
 				try{
 				Thread.sleep(60000);
 				}catch(Exception e){
-					e.printStackTrace();
+					System.out.println("Hubo un error "
+							+ "irrecuperable en la simulacion");
+					System.exit(1);
 				}
 			}
 		}
@@ -159,7 +161,8 @@ public class Simulator {
 		 * @param rs
 		 */
 		
-		public Worker(Connection connection, PreparedStatement pstate, ArrayList<Toll> tolls, ResultSet rs){
+		public Worker(Connection connection, PreparedStatement pstate, 
+				ArrayList<Toll> tolls, ResultSet rs){
 			this.connection = connection;
 			this.pstate = pstate;
 			this.rs = rs;
@@ -184,8 +187,9 @@ public class Simulator {
 					pstate = connection.prepareStatement(
 							"SELECT COUNT(tollid) "
 							+ "FROM tollcash "
-							+ "WHERE date > date_sub(NOW(), INTERVAL 1 MINUTE) "
-								+ "AND tollid = ?;");
+							+ "WHERE date > date_sub(NOW(), "
+							+ "INTERVAL 1 MINUTE) "
+							+ "AND tollid = ?;");
 					pstate.setInt(1, id);
 					
 					rs = pstate.executeQuery();
@@ -196,8 +200,9 @@ public class Simulator {
 					pstate = connection.prepareStatement(
 							"SELECT COUNT(tollid) "
 							+ "FROM tollsensor "
-							+ "WHERE date > date_sub(NOW(), INTERVAL 1 MINUTE) "
-								+ "AND tollid = ?;");
+							+ "WHERE date > date_sub(NOW(), "
+							+ "INTERVAL 1 MINUTE) "
+							+ "AND tollid = ?;");
 					pstate.setInt(1, id);
 					
 					rs = pstate.executeQuery();
@@ -208,8 +213,9 @@ public class Simulator {
 					pstate = connection.prepareStatement(
 							"SELECT COUNT(tollid) "
 							+ "FROM tollphoto "
-							+ "WHERE date > date_sub(NOW(), INTERVAL 1 MINUTE) "
-								+ "AND tollid = ?;");
+							+ "WHERE date > date_sub(NOW(), "
+							+ "INTERVAL 1 MINUTE) "
+							+ "AND tollid = ?;");
 					
 					pstate.setInt(1, id);
 					
@@ -220,7 +226,9 @@ public class Simulator {
 					toll.setFlow(f);
 				}
 			}catch(SQLException e){
-				e.printStackTrace();
+				System.out.println("Hubo un error "
+						+ "irrecuperable en la simulacion");
+				System.exit(1);
 			}
 		}
 	}
@@ -248,7 +256,9 @@ public class Simulator {
 					+ "FROM intersection";
 			rs = st.executeQuery(query);
 			while(rs.next()){
-				intersections.add(new Intersection((rs.getInt(1)+tolls.size()),false));
+				intersections.add(
+						new Intersection((rs.getInt(1)+tolls.size()),
+								false));
 			}
 			rs.close();
 				// ** Fin: Almacenamiento de "intersection" **
@@ -265,7 +275,6 @@ public class Simulator {
 						if(ints.getId() == (rs.getInt(1)+tolls.size())){
 							ints.connectTo(tollid);
 							ints.connectTo(tollid.getId());
-							System.out.println("Toll: " + tollid.getId() + "-> Intersection: " + ints.getId());
 							tollid.connectTo(ints);
 							tollid.connectTo(ints.getId());
 						}
@@ -277,11 +286,12 @@ public class Simulator {
 			// *** Inicio: Definición de intersecciones fuente ***
 			for(Intersection ints: intersections.subList(0, 8)){
 				ints.setSource(true);
-				System.out.println("Sources: " + ints.getId());
 			}
 			// *** Fin: Definición de intersecciones fuente ***
 		}catch(SQLException e){
-			e.printStackTrace();
+			System.out.println("Hubo un error "
+					+ "irrecuperable en la simulacion");
+			System.exit(1);
 		}
 	}
 }
