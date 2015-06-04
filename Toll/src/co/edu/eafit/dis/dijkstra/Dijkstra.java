@@ -1,6 +1,8 @@
 
-// http://www.algolist.com/code/java/Dijkstra's_algorithm.
-
+//Implementacion de Dijkstra adaptada de
+//http://www.algolist.com/code/java/Dijkstra's_algorithm
+//y convertida para los requisitos del problema con
+//la mayoria del codigo nuestro y original.
 package co.edu.eafit.dis.dijkstra;
 
 import java.util.PriorityQueue;
@@ -11,17 +13,47 @@ import java.util.Collections;
 import co.edu.eafit.dis.graph.Intersection;
 import co.edu.eafit.dis.graph.Toll;
 
+/**
+ * @author tllanos, ccorre20, icardena
+ * 
+ * Clase encargada de proveer la información de cada vértice:
+ * Su objeto identificador y peso respectivo.
+ * 
+ */
 class Edge {
     public final Vertex target;
     public final double weight;
-    public Edge(Vertex argTarget, double argWeight)
-    { target = argTarget; weight = argWeight; }
+    
+    /**
+     * Crea una arista con un peso especifico.
+     * 
+     * @param argTarget nodo objetivo.
+     * @param argWeight peso del nodo.
+     */
+    public Edge(Vertex argTarget, double argWeight){
+    	target = argTarget; 
+    	weight = argWeight; 
+    }
 }
 
+/**
+ * Esta clase simplemente se encarga de hacer el procesamiento
+ * basado en el algoritmo de Dijkstra para el camino
+ * con la menor congestion.
+ * @author tllanos, ccorre20, icardena, algolist.com
+ */
 public class Dijkstra {
 	
     public ArrayList<Vertex> v;
     
+    /**
+     * Aplica el algoritmo de Dijkstra al grafo proveido a partir de un
+     * vertice fuente. 
+     * <p>
+     * Nota: La implementación del algoritmo de Dijkstra se realiza utilizando
+     * una cola de prioridad.
+     * @param source el nodo fuente
+     */
     public static void computePaths(Vertex source) {
         source.minDistance = 0;
         PriorityQueue<Vertex> vertexQueue = new PriorityQueue<Vertex>();
@@ -45,6 +77,12 @@ public class Dijkstra {
         }
     }
 
+    /**
+     * Devuelve una lista de tipo "list<Vertex>", la cual continene el camino
+     * más corto de un punto inical A a un punto final B.
+     * @param target el nodo objetivo.
+     * @return una lista que representa al camino.
+     */
     public static List<Vertex> getShortestPathTo(Vertex target) {
         List<Vertex> path = new ArrayList<Vertex>();
         for (Vertex vertex = target; vertex != null; vertex = vertex.previous)
@@ -56,6 +94,14 @@ public class Dijkstra {
         return path;
     }
     
+    /**
+     * Se mueve por cada peaje hasta encontrar aquel cuyo número de identificación
+     * concuerda con el proveido al llamar la función.
+     * 
+     * @param id id del nodo.
+     * @param toll referencia a todos los tolls.
+     * @return Flujo almacenado en cada peaje.
+     */
     public int getIntFlow(int id, ArrayList<Toll> toll) {
 //    	System.out.println("Flow to " + id);
     		int flow = 0;
@@ -76,10 +122,19 @@ public class Dijkstra {
     	}
     	return null;
     }
-
-    public List<Vertex> initDijkstra(ArrayList<Toll> toll, ArrayList<Intersection> inter, int init, int dest) {
-    	
-    	
+    /**
+     * Llama al método Dijkstra y comienza el procesamiento del
+     * "camino más corto".
+     * @param toll referencia a todos los tolls.
+     * @param inter referencia a todos las intersecciones.
+     * @param init nodo inicial.
+     * @param dest nodo destino.
+     * @return Una lista de tipo "list<Vertex>", la cual continene el camino
+     * 		   más corto de un punto inical A a un punto final B.
+     */
+    public List<Vertex> initDijkstra(ArrayList<Toll> toll, 
+    		ArrayList<Intersection> inter, 
+    		int init, int dest) {
     	v = new ArrayList<Vertex>();
     	
     	for(int i = 0; i < toll.size(); i++) {
@@ -115,27 +170,6 @@ public class Dijkstra {
     		}
     		v.get(i+toll.size()).adjacencies = edges;
     	}
-    	
-    	
-        /*Vertex v0 = new Vertex("Redvile");
-		Vertex v1 = new Vertex("Blueville");
-		Vertex v2 = new Vertex("Greenville");
-		Vertex v3 = new Vertex("Orangeville");
-		Vertex v4 = new Vertex("Purpleville");
-	
-		v0.adjacencies = new Edge[]{ new Edge(v1, 5),
-		                             new Edge(v2, 10),
-	                                 new Edge(v3, 8) };
-		v1.adjacencies = new Edge[]{ new Edge(v0, 5),
-		                             new Edge(v2, 3),
-		                             new Edge(v4, 7) };
-		v2.adjacencies = new Edge[]{ new Edge(v0, 10),
-	                               new Edge(v1, 3) };
-		v3.adjacencies = new Edge[]{ new Edge(v0, 8),
-		                             new Edge(v4, 2) };
-		v4.adjacencies = new Edge[]{ new Edge(v1, 7),
-	                               new Edge(v3, 2) };
-		Vertex[] vertices = { v0, v1, v2, v3, v4 };*/
     	
 	    computePaths(v.get(init-1));
 	    

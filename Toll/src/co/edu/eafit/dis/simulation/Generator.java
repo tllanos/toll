@@ -14,6 +14,12 @@ import co.edu.eafit.dis.entity.Vehicle;
 import co.edu.eafit.dis.graph.Intersection;
 import co.edu.eafit.dis.graph.Toll;
 
+/**
+ * Clase encargada de generar vehiculos para simular un ambiente
+ * controlado en el cual se produce cierta cantidad de tráfico vehicular 
+ * en función de la hora del día.
+ * @author tllanos, ccorre20, icardena
+ */
 public class Generator implements Runnable{
 	
 	private CopyOnWriteArrayList<Thread> vSim;
@@ -21,7 +27,6 @@ public class Generator implements Runnable{
 	private Vehicle veh;
 	private Dijkstra d;
 	private Thread t;
-	private int id = 0;
 	private ArrayList<Intersection> intersections;
 	private ArrayList<Toll> tolls;
 	private Register register;
@@ -29,6 +34,22 @@ public class Generator implements Runnable{
 	private Statement statement;
 	private ResultSet rs;
 	
+	/**
+	 * Inicializa la conexión con la base de datos y asigna los valores
+	 * requeridos para dar inicio a la generación de vehiculos.
+	 * <p>
+	 * El proceso de generación de vehiculos usa la función seno como una forma
+	 * de controlar la cantidad de autos que serán creados. Para cumplir
+	 * con dicho objetivo, se calcula el porcentaje de tiempo transcurrido,
+	 * basado en el sistema 24h, el cual es multiplica por 2π. Luego, la función
+	 * |sin(Ө)| es aplicada al resultado de la operación anterior y finalmente
+	 * multiplicado por la cantidad máxima de vehiculos que se requiere producir. 
+	 * 
+	 * @param vSim los "threads" para los carros.
+	 * @param intersections todas las intersecciones.
+	 * @param tolls todos los "tolls".
+	 * @param register el registro de los carros generados.
+	 */
 	public Generator(CopyOnWriteArrayList<Thread> vSim, 
 			ArrayList<Intersection> intersections, 
 			ArrayList<Toll> tolls, 
@@ -65,7 +86,7 @@ public class Generator implements Runnable{
 			if(f == 0){
 				f = 12;
 			}
-			int quantity = Math.abs((int)(((Math.sin((2 * Math.PI) * f)) * 5999.0d) + 0.5d)) + 1;
+			int quantity = Math.abs((int)(((Math.sin((2 * Math.PI) * f)) * 5940.0d) + 0.5d)) + 60;
 			long dt = (long)((3600.0d/quantity) * 1000.0d);
 			init = (int)((Math.random() * (range-1)) + li);
 			System.out.println("init : "+ init);
@@ -76,11 +97,19 @@ public class Generator implements Runnable{
 			System.out.println("dest : "+ dest);
 			System.out.println("Estoy generando un carro");
 			System.out.println("Son las: " + hour + "q: " + quantity + "dt: " + dt);
-			//
-			int nran = (int)((Math.random() * 5.0d) + 0.5d);
+			int nran = (int)((Math.random() * 100.0d) + 0.5d);
 			String platetmp = null, query;
 			int utmp = 0, max = 0, sensortmp = 0;
-			//nran = 2;
+			//Evaluacion ternaria.
+			if(nran < 70){
+				nran = 1;
+			}else if(nran < 85){
+				nran = (int)((Math.random() * 100.0d) + 0.5d);
+				nran = (nran < 50) ? 2 : 3;
+			}else{
+				nran = (int)((Math.random() * 100.0d) + 0.5d);
+				nran = (nran < 50) ? 4 : 5;
+			}
 			switch(nran){
 				default:
 				case 1:
@@ -168,7 +197,6 @@ public class Generator implements Runnable{
 					register.add(veh);
 					break;
 			}
-			//
 			t = new Thread(veh);
 			synchronized(vSim){
 				vSim.add(t);

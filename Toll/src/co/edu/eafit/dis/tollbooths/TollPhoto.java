@@ -3,19 +3,46 @@ package co.edu.eafit.dis.tollbooths;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Date;
 
 import co.edu.eafit.dis.entity.Vehicle;
 import co.edu.eafit.dis.graph.Toll;
 
+/**
+ * Esta clase es la representacion de las casetas que 
+ * utilizan un analisis de una foto de la placa de los carros,
+ * y por tanto es ligeramente mas compleja que las otras,
+ * pero en su funcionalidad, esencialemente, hace todo el manejo de
+ * los usuarios haciendo algunas consultas a la base de datos,
+ * pero, no es tan significativo como para comprometer
+ * la velocidad y eficacia de la simulacion.
+ *
+ * Esencialmente lo que hace la clase, al ser instanciada y puesta en
+ * marcha, es constantemente revisar si tiene vehiculos por procesar
+ * y si es del caso los procesa, primero creando la consulta en la base de datos
+ * y luego ya esperando el tiempo que, segun lo estudiado,
+ * toma recorrer un peaje.
+ * @author tllanos, ccorre20, icardena
+ * @see TollCash
+ * @see TollScanner
+ * @see java.lang.Runnable
+ */
 public class TollPhoto extends TollBooth {
 	
+	/**
+	 * Simplemente construye al objeto, dandole el tipo y lugar,
+	 * y continua con la construccion en el constructor del
+	 * padre.
+	 * @param location el peaje en que se encuentra.
+	 * @see TollBooth#TollBooth(Toll)
+	 */
 	public TollPhoto(Toll location){
 		super(location);
 		type = 3;
 	}
 	
-	@Override
+	/**
+	 * Ver {@link TollPhoto}
+	 */
 	public void run(){
 		Vehicle tmp;
 		while(true){	

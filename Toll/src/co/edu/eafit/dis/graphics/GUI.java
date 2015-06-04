@@ -13,7 +13,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 public class GUI implements ActionListener {
-	private boolean quit;
 	public boolean state;
 	private JFrame frame;
 	private JButton btnStart, btnStop, btnClear;
@@ -67,8 +66,6 @@ public class GUI implements ActionListener {
 	    frame.setLocationRelativeTo(null);
 	    frame.setVisible(true);
 	    state = false;
-	    quit = false;
-	    
 	    frame.addWindowListener(new java.awt.event.WindowAdapter() {
 	    	@Override
     	    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -112,7 +109,6 @@ public class GUI implements ActionListener {
 	}
 	
 	public void setQuit(){
-		quit = true;
 	}
 
 	public boolean quit() {

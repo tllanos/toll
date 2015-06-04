@@ -7,8 +7,19 @@ import co.edu.eafit.dis.dijkstra.*;
 import co.edu.eafit.dis.graph.Intersection;
 import co.edu.eafit.dis.graph.Node;
 import co.edu.eafit.dis.graph.Toll;
-import co.edu.eafit.dis.simulation.Register;
 
+/**
+ * Esta clase es el vehiculo como tal que se mueve a traves de
+ * la simulacion y el que, en la gran mayoria de los casos,
+ * instiga las acciones de los demas objetos.
+ * 
+ * Esta implementado de tal manera que implemente la interfaz Runnable
+ * pues es necesario, para efectos de la sincronizacion de la simulacion,
+ * que todos los vehiculos trabajen tan concurrentemente como sea posible.
+ * 
+ * @author tllanos, ccorre20, icardena
+ *
+ */
 public class Vehicle implements Runnable{
 	private int userid;
 	private int sensorid;
@@ -91,6 +102,17 @@ public class Vehicle implements Runnable{
 		System.out.println("Llegue");
 	}
 	
+	/**
+	 * Este metodo construye al vehiculo,
+	 * dandole todo los necesario para poder hacer su recorrido.
+	 * @param userid el identificador del usuario, 0 si no hay
+	 * @param sensorid el identificador del sensor, 0 si no hay
+	 * @param plate la placa del carro, si esta registrada, null si no
+	 * @param type el tipo del carro, 1 para efecitvo, 2 para sensor, y 3 para pago con photos
+	 * @param path una lista que implementa el camino a tomar por el carro
+	 * @param tolls referencias a todos los peajes
+	 * @param intersections referencias a todas las intersecciones
+	 */
 	public Vehicle(int userid, 
 			int sensorid,
 			String plate,
@@ -106,29 +128,49 @@ public class Vehicle implements Runnable{
 		this.tolls = tolls;
 		this.intersections = intersections;
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(100);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Determina si el carro ha completado su visita del peaje
+	 * @param visited true si completo.
+	 */
 	public void setVisited(boolean visited){
 		this.visited = visited;
 		System.out.println("VISITE");
 	}
 	
+	/**
+	 * Devuelve el tipo del carro.
+	 * @return el tipo del carro.
+	 */
 	public int getType(){
 		return type;
 	}
 	
+	/**
+	 * Devuelve el identificador del usuario.
+	 * @return el id.
+	 */
 	public int getUserid() {
 		return userid;
 	}
 	
+	/**
+	 * Devuelve el identificador del sensor.
+	 * @return sensorid.
+	 */
 	public int getSensorId(){
 		return sensorid;
 	}
 	
+	/**
+	 * Devuelve la placa del carro.
+	 * @return la placa.
+	 */
 	public String getPlate(){
 		return plate;
 	}

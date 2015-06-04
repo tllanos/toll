@@ -1,5 +1,11 @@
 package co.edu.eafit.dis.dijkstra;
 
+/**
+ * Clase encargada de proveer la estructura de datos necesaria para
+ * almacenar el resultado producido por la implementación
+ * del algoritmo de Dijkstra (Ver clase Dijkstra para más información).
+ * @author tllanos, ccorre20, icardena
+ */
 public class Vertex implements Comparable<Vertex> {
     public final String name;
     public Edge[] adjacencies;

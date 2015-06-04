@@ -7,18 +7,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import co.edu.eafit.dis.graph.Intersection;
 import co.edu.eafit.dis.graph.Toll;
-import co.edu.eafit.dis.graphics.GUI;
-import co.edu.eafit.dis.dijkstra.Dijkstra;
-import co.edu.eafit.dis.entity.Vehicle;
+//import co.edu.eafit.dis.graphics.GUI;
 
+/**
+ * Esta clase es aquella que instacia toda 
+ * @author tllanos, ccorre20, icardena
+ */
 public class Simulator {
-	private boolean running;
+	//private boolean running;
 	private Statement st;
 	private ResultSet rs;
 	private Connection connection;
@@ -28,7 +28,7 @@ public class Simulator {
 	private String query = null;
 	private PreparedStatement pstate = null;
 	private Register register;
-	private GUI g;
+	//private GUI g;
 	
 	public Simulator() {
 		
@@ -177,7 +177,7 @@ public class Simulator {
 			query = "SELECT distinct tollid FROM toll";
 			rs = st.executeQuery(query);
 			while(rs.next()){
-				tolls.add(new Toll(rs.getInt(1),false,register));
+				tolls.add(new Toll(rs.getInt(1),false));
 			}
 			rs.close();
 			query = "SELECT distinct intid FROM intersection";
