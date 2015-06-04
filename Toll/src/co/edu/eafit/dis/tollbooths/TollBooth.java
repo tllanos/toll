@@ -52,8 +52,8 @@ public abstract class TollBooth implements Runnable{
 		q = new LinkedList<Vehicle>();
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			connection = DriverManager.getConnection("jdbc:mysql://localhost/tollcontrol?"
-			          + "user=root&password=root");
+			connection = DriverManager.getConnection("jdbc:mysql://toll.cqkduygrcpmt.us-east-1.rds.amazonaws.com:3306/tollcontrol?"
+			          + "user=root&password=rootroot");
 			st = connection.createStatement();
 		} catch (Exception e) {
 			e.printStackTrace();

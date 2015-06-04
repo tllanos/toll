@@ -70,8 +70,8 @@ public class Generator implements Runnable{
 		this.tolls = tolls;
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
-			connection = DriverManager.getConnection("jdbc:mysql://localhost/tollcontrol?"
-		              + "user=root&password=root");
+			connection = DriverManager.getConnection("jdbc:mysql://toll.cqkduygrcpmt.us-east-1.rds.amazonaws.com:3306/tollcontrol?"
+		              + "user=root&password=rootroot");
 			statement = connection.createStatement();
 		}catch(Exception e){
 			System.out.println("Error connecting to the database");
