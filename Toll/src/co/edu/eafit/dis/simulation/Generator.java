@@ -95,7 +95,7 @@ public class Generator implements Runnable{
 				dest = (int)((Math.random() * (range-1)) + li);
 			}
 			System.out.println("dest : "+ dest);
-			System.out.println("Estoy generando un carro");
+			System.out.println("Un vehiculo esta siendo generado");
 			System.out.println("Son las: " + hour + "q: " + quantity + "dt: " + dt);
 			int nran = (int)((Math.random() * 100.0d) + 0.5d);
 			String platetmp = null, query;
@@ -113,12 +113,12 @@ public class Generator implements Runnable{
 			switch(nran){
 				default:
 				case 1:
-					System.out.println("CARRO CASH");
+					System.out.println("Vehiculo que pagará en efectivo");
 					veh = new Vehicle(0, 0, null, 1, d.initDijkstra(tolls, intersections, init, dest), tolls, intersections);
 					register.add(veh);
 					break;
 				case 2:
-					System.out.println("CARRO SCANNER1");
+					System.out.println("Vehiculo que usa sensor");
 					try {
 						do{
 							rs = statement.executeQuery("SELECT userid, sensorid FROM users where type = 1 ORDER BY RAND() LIMIT 1;");
@@ -134,7 +134,7 @@ public class Generator implements Runnable{
 					register.add(veh);
 					break;
 				case 3:
-					System.out.println("CARRO SCANNER2");
+					System.out.println("Vehiculo que usa sensor");
 					try {
 						query = "SELECT MAX(userid) FROM users";
 						rs = statement.executeQuery(query);
@@ -150,10 +150,14 @@ public class Generator implements Runnable{
 					register.add(veh);
 					break;
 				case 4:
-					System.out.println("CARRO PHOTO1");
+					System.out.println("Vehiculo que pasará por caseta rápida");
 					try {
 						do{
-							rs = statement.executeQuery("SELECT userid, plate FROM users where type = 2 ORDER BY RAND() LIMIT 1;");
+							rs = statement.executeQuery("SELECT userid, plate "
+														+ "FROM users "
+														+ "WHERE type = 2 "
+															+ "ORDER BY RAND() "
+															+ "LIMIT 1;");
 							if(!rs.next())
 								break;
 							utmp = rs.getInt(1);
@@ -166,7 +170,7 @@ public class Generator implements Runnable{
 					register.add(veh);
 					break;
 				case 5:
-					System.out.println("CARRO PHOTO2");
+					System.out.println("Vehiculo que pasará por caseta rápida");
 					try {
 						do{
 							int r;

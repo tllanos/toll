@@ -14,7 +14,8 @@ import co.edu.eafit.dis.graph.Toll;
 //import co.edu.eafit.dis.graphics.GUI;
 
 /**
- * Esta clase es aquella que instacia toda 
+ * Clase encargada de Iniciar la simulación por medio de la integración 
+ * de los recursos del proyecto.
  * @author tllanos, ccorre20, icardena
  */
 public class Simulator {
@@ -29,6 +30,21 @@ public class Simulator {
 	private PreparedStatement pstate = null;
 	private Register register;
 	//private GUI g;
+	
+	/**
+	 * Inicializa la conección a la base de datos y asigna los valores
+	 * requeridos para dar inicio a la simulación.
+	 * <p>
+	 * Para efectos semánticos de la simulación, se hace uso de hilos
+	 * o "Threads" (Los cuales representan los diferentes procesos que se 
+	 * ejecutan simultaneamente para crear un entorno controlado que 
+	 * simula sucesos de la vida real) lo cuales son almacenados en un objeto 
+	 * de tipo "CopyOnWriteArrayList<Thread>".
+	 * <p>
+	 * Nota: Es más seguro utilizar objetos de tipo "CopyOnWriteArrayList" para
+	 * almacenar hilos o "Threads". 
+	 * 
+	 */
 	
 	public Simulator() {
 		
@@ -57,13 +73,16 @@ public class Simulator {
 //				e.printStackTrace();
 //			}
 //		}
-		Driver();
-	}
-	
-	public void Driver(){
 		simulate();
 	}
-		
+	
+	/**
+	 * Inicia la simulación al agrupar todos los métodos de la clase y
+	 * hacerlos trabajar conjuntamente. Adicionalmente, Mantiene un riguroso
+	 * control sobre todos los hilos o "Threads" y destruye los mismos cuando
+	 * dejan de ser requeridos.
+	 */
+	
 	public void simulate() {
 		//Start
 		generateGraph();
@@ -77,9 +96,9 @@ public class Simulator {
 			synchronized(vSim){
 				for(Thread t: vSim){
 					synchronized(t){
-						if(!t.isAlive()){
+						if(!t.isAlive()){ //Evalua si el hilo es o no requerido.
 							try {
-								t.join();
+								t.join(); //Destruye el objeto de tipo "Thread".
 								System.out.println(vSim.size());
 								vSim.remove(t);		
 								System.out.println(vSim.size());
@@ -95,6 +114,9 @@ public class Simulator {
 					}
 				}
 			}
+			//SO requiere especificar una pausa entre los cilos.
+			//Si dicha pausa no es especificada, el programa no correra
+			//de forma apropiada.
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -102,6 +124,11 @@ public class Simulator {
 			}
 		}
 	}
+	
+	/** 
+	 * Clase encargada de asignar el flujo a cada caseta de cada peaje.
+	 * @author tllanos, ccorre20, icardena
+	 */
 	
 	private static class Worker implements Runnable{
 		
@@ -122,12 +149,29 @@ public class Simulator {
 			}
 		}
 		
+		/**
+		 * Asigna los valores requeridos para iniciar el/los procesos 
+		 * en segundo plano (Worker).
+		 * 
+		 * @param connection
+		 * @param pstate
+		 * @param tolls
+		 * @param rs
+		 */
+		
 		public Worker(Connection connection, PreparedStatement pstate, ArrayList<Toll> tolls, ResultSet rs){
 			this.connection = connection;
 			this.pstate = pstate;
 			this.rs = rs;
 			this.tolls = tolls;
 		}
+		
+		/**
+		 * Recopila la información de todas las casetas ("tollbooths"), 
+		 * referente al campo "date", de la base de datos y calcula el 
+		 * flujo de cada una basado en la cantidad de vehiculos que las 
+		 * cruzan por minuto. 
+		 */
 		
 		private synchronized void assignFlow(){
 			try{
@@ -138,7 +182,10 @@ public class Simulator {
 					id = toll.getId();
 					
 					pstate = connection.prepareStatement(
-							"SELECT COUNT(tollid) FROM tollcash WHERE date > date_sub(NOW(), INTERVAL 1 MINUTE) AND tollid = ?;");
+							"SELECT COUNT(tollid) "
+							+ "FROM tollcash "
+							+ "WHERE date > date_sub(NOW(), INTERVAL 1 MINUTE) "
+								+ "AND tollid = ?;");
 					pstate.setInt(1, id);
 					
 					rs = pstate.executeQuery();
@@ -147,7 +194,10 @@ public class Simulator {
 					}
 					
 					pstate = connection.prepareStatement(
-							"SELECT COUNT(tollid) FROM tollsensor WHERE date > date_sub(NOW(), INTERVAL 1 MINUTE) AND tollid = ?;");
+							"SELECT COUNT(tollid) "
+							+ "FROM tollsensor "
+							+ "WHERE date > date_sub(NOW(), INTERVAL 1 MINUTE) "
+								+ "AND tollid = ?;");
 					pstate.setInt(1, id);
 					
 					rs = pstate.executeQuery();
@@ -156,7 +206,10 @@ public class Simulator {
 					}
 					
 					pstate = connection.prepareStatement(
-							"SELECT COUNT(tollid) FROM tollphoto WHERE date > date_sub(NOW(), INTERVAL 1 MINUTE) AND tollid = ?;");
+							"SELECT COUNT(tollid) "
+							+ "FROM tollphoto "
+							+ "WHERE date > date_sub(NOW(), INTERVAL 1 MINUTE) "
+								+ "AND tollid = ?;");
 					
 					pstate.setInt(1, id);
 					
@@ -172,22 +225,39 @@ public class Simulator {
 		}
 	}
 	
+	/**
+	 * Recopila la información de todas las casetas ("tollbooths"), 
+	 * referente al campo "date", de la base de datos y calcula el 
+	 * flujo de cada una basado en la cantidad de vehiculos que las 
+	 * cruzan por minuto. 
+	 */
+	
 	private void generateGraph(){
 		try{
+			// *** Inicio: Proceso de almacenaje ***
+				// ** Inicio: Almacenamiento de "toll" **
 			query = "SELECT distinct tollid FROM toll";
 			rs = st.executeQuery(query);
 			while(rs.next()){
 				tolls.add(new Toll(rs.getInt(1),false));
 			}
 			rs.close();
-			query = "SELECT distinct intid FROM intersection";
+				//  ** Fin: Almacenamiento de "toll" **
+			//  ** Inicio: Almacenamiento de "intersection" **
+			query = "SELECT distinct intid "
+					+ "FROM intersection";
 			rs = st.executeQuery(query);
 			while(rs.next()){
 				intersections.add(new Intersection((rs.getInt(1)+tolls.size()),false));
 			}
 			rs.close();
+				// ** Fin: Almacenamiento de "intersection" **
+			// *** Fin: Proceso de almacenaje ***
+			// *** Inicio: Proceso de enlace entre "toll" e "interction" ***
 			for(Toll tollid: tolls){
-				pstate = connection.prepareStatement("SELECT intersection from connection where tollid = ?");
+				pstate = connection.prepareStatement("SELECT intersection "
+													+ "FROM connection "
+													+ "WHERE tollid = ?");
 				pstate.setInt(1, tollid.getId());
 				rs = pstate.executeQuery();
 				while(rs.next()){
@@ -203,10 +273,13 @@ public class Simulator {
 				}
 			}
 			rs.close();
+			// *** Fin: Proceso de enlace entre "toll" e "interction" ***
+			// *** Inicio: Definición de intersecciones fuente ***
 			for(Intersection ints: intersections.subList(0, 8)){
 				ints.setSource(true);
 				System.out.println("Sources: " + ints.getId());
 			}
+			// *** Fin: Definición de intersecciones fuente ***
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
