@@ -46,21 +46,31 @@ public class TollCash extends TollBooth {
 	 */
 	public void run() {
 		Vehicle tmp;
+		boolean cars;
 		while (true) {
+			cars = true;
 			synchronized (q) {
-				while (!q.isEmpty()) {
+				for(LinkedList<Vehicle> l : q.values()){
+					if(!l.isEmpty()){
+						cars = true;
+					}
+				}
+				while (cars) {
 					// tmp = q.poll();
 					try {
 						for (int i = 0; i < location.getConnectionInt().length; i++) {
 							tmp = q.get(location.getConnectionInt()[i]).poll();
-							pstate = connection
-									.prepareStatement("INSERT INTO tollcash VALUES ( 5, ?, ?, ?)");
-							pstate.setTimestamp(1, new Timestamp(Calendar
-									.getInstance().getTimeInMillis()));
-							pstate.setInt(2, location.getId());
-							pstate.setInt(3, type);
-							pstate.execute();
-							tmp.setVisited(true);
+							if(tmp != null){
+								pstate = connection
+										.prepareStatement("INSERT INTO tollcash VALUES ( 5, ?, ?, ?)"
+												+ "ON DUPLICATE KEY UPDATE date = date + INTERVAL 1 SECOND;");
+								pstate.setTimestamp(1, new Timestamp(Calendar
+										.getInstance().getTimeInMillis()));
+								pstate.setInt(2, location.getId());
+								pstate.setInt(3, type);
+								pstate.execute();
+								tmp.setVisited(true);
+							}
 						}
 						Thread.sleep(30000);
 					} catch (InterruptedException e) {

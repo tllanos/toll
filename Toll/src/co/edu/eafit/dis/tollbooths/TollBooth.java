@@ -53,7 +53,7 @@ public abstract class TollBooth implements Runnable {
 	 */
 	public TollBooth(Toll location) {
 		this.location = location;
-		q = new HashMap();
+		q = new HashMap<Integer,LinkedList<Vehicle>>();
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql:"

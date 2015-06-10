@@ -58,7 +58,7 @@ public class Vehicle implements Runnable {
 							System.out.println("Frenando ejecucion");
 							System.exit(2);
 						}
-						source = Integer.parseInt(path.get(0).name);
+						source = location;
 						path.remove(0);
 						last = t;
 						((Toll) last).recieveVehicle(this, source);
@@ -99,6 +99,7 @@ public class Vehicle implements Runnable {
 					}
 				}
 			}
+			location = next;
 		}
 		Thread.yield();
 	}

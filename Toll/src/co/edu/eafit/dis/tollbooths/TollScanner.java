@@ -47,40 +47,49 @@ public class TollScanner extends TollBooth {
 	 */
 	public void run() {
 		Vehicle tmp;
+		boolean cars;
 		while (true) {
+			cars = false;
 			synchronized (q) {
-				while (!q.isEmpty()) {
+				for(LinkedList<Vehicle> l : q.values()){
+					if(!l.isEmpty()){
+						cars = true;
+					}
+				}
+				while (cars) {
 					// tmp = q.poll();
 					try {
 
 						for (int i = 0; i < location.getConnectionInt().length; i++) {
 							tmp = q.get(location.getConnectionInt()[i]).poll();
-							query = "SELECT funds FROM users where userid = "
-									+ tmp.getUserid() + ";";
-							rs = st.executeQuery(query);
-							rs.next();
-							int fund = rs.getInt(1);
-							if (fund < 5) {
-								System.out.println("Un usario debe dinero");
+							if(tmp != null){
+								query = "SELECT funds FROM users where userid = "
+										+ tmp.getUserid() + ";";
+								rs = st.executeQuery(query);
+								rs.next();
+								int fund = rs.getInt(1);
+								if (fund < 5) {
+									System.out.println("Un usario debe dinero");
+								}
+	
+								pstate = connection
+										.prepareStatement("INSERT INTO tollsensor "
+												+ "VALUES ( 5, ?, ?, ?, ?)"
+												+ "ON DUPLICATE KEY UPDATE date = date + INTERVAL 1 SECOND;");
+								pstate.setTimestamp(1, new Timestamp(Calendar
+										.getInstance().getTimeInMillis()));
+								pstate.setInt(2, location.getId());
+								pstate.setInt(3, tmp.getSensorId());
+								pstate.setInt(4, type);
+								pstate.execute();
+	
+								query = "UPDATE  users " + "SET funds = "
+										+ (fund - 5.0d) + "WHERE userid = "
+										+ tmp.getUserid() + ";";
+								st.execute(query);
+								tmp.setVisited(true);
 							}
-
-							pstate = connection
-									.prepareStatement("INSERT INTO tollsensor "
-											+ "VALUES ( 5, ?, ?, ?, ?)");
-							pstate.setTimestamp(1, new Timestamp(Calendar
-									.getInstance().getTimeInMillis()));
-							pstate.setInt(2, location.getId());
-							pstate.setInt(3, tmp.getSensorId());
-							pstate.setInt(4, type);
-							pstate.execute();
-
-							query = "UPDATE  users " + "SET funds = "
-									+ (fund - 5.0d) + "WHERE userid = "
-									+ tmp.getUserid() + ";";
-							st.execute(query);
-							tmp.setVisited(true);
 						}
-
 						Thread.sleep(15000);
 
 					} catch (InterruptedException e) {

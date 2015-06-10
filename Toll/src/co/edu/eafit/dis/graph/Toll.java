@@ -38,26 +38,6 @@ public class Toll extends Node {
 	 */
 	public Toll(int id, boolean source) {
 		super(id, source);
-		cashB = new ArrayList<TollCash>();
-		cashB.add(new TollCash(this));
-		scannerB = new ArrayList<TollScanner>();
-		scannerB.add(new TollScanner(this));
-		photoB = new ArrayList<TollPhoto>();
-		photoB.add(new TollPhoto(this));
-		boothP = new ArrayList<Thread>();
-
-		for (TollBooth c : cashB) {
-			boothP.add(new Thread(c));
-		}
-		for (TollBooth c : scannerB) {
-			boothP.add(new Thread(c));
-		}
-		for (TollBooth c : photoB) {
-			boothP.add(new Thread(c));
-		}
-		for (Thread t : boothP) {
-			t.start();
-		}
 	}
 
 	/**
@@ -78,6 +58,29 @@ public class Toll extends Node {
 		case 3:
 			photoB.get(0).q.get(source).add(vehicle);
 			break;
+		}
+	}
+	
+	public void initiateBooths(){
+		cashB = new ArrayList<TollCash>();
+		cashB.add(new TollCash(this));
+		scannerB = new ArrayList<TollScanner>();
+		scannerB.add(new TollScanner(this));
+		photoB = new ArrayList<TollPhoto>();
+		photoB.add(new TollPhoto(this));
+		boothP = new ArrayList<Thread>();
+
+		for (TollBooth c : cashB) {
+			boothP.add(new Thread(c));
+		}
+		for (TollBooth c : scannerB) {
+			boothP.add(new Thread(c));
+		}
+		for (TollBooth c : photoB) {
+			boothP.add(new Thread(c));
+		}
+		for (Thread t : boothP) {
+			t.start();
 		}
 	}
 

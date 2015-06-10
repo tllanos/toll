@@ -281,6 +281,11 @@ public class Simulator {
                 }
             }
             rs.close();
+            
+            for(Toll tollid: tolls){
+            	tollid.initiateBooths();
+            }
+            
             // *** Fin: Proceso de enlace entre "toll" e "interction" ***
             // *** Inicio: Definición de intersecciones fuente ***
             for(Intersection ints: intersections.subList(0, 8)){

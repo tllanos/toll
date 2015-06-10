@@ -90,9 +90,9 @@ public class Generator implements Runnable {
 			Calendar rightNow = Calendar.getInstance();
 			int hour = rightNow.get(Calendar.HOUR_OF_DAY);
 			double f = (hour / 24.0d);
-			if (f == 0) {
-				f = 12; // error: Deberia ser 24, no 12
-			}
+//			if (f == 0) {
+//				f = 12; // error: Deberia ser 24, no 12
+//			}
 			int quantity = Math
 					.abs((int) (((Math.sin((2 * Math.PI) * f)) * 5940.0d) + 0.5d)) + 60;
 			long dt = (long) ((3600.0d / quantity) * 1000.0d);
@@ -155,8 +155,7 @@ public class Generator implements Runnable {
 							+ "irrecuperable en la simulacion");
 					System.exit(1);
 				}
-				veh = new Vehicle(max, 0, platetmp,
-						2, // error: sensorid no debe ser 0
+				veh = new Vehicle(max, max, null, 2,
 						d.initDijkstra(tolls, intersections, init, dest),
 						tolls, intersections);
 				register.add(veh);
