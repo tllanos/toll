@@ -3,6 +3,7 @@ package co.edu.eafit.dis.tollbooths;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.LinkedList;
 
 import co.edu.eafit.dis.entity.Vehicle;
 import co.edu.eafit.dis.graph.Toll;
@@ -37,6 +38,8 @@ public class TollPhoto extends TollBooth {
      */
     public TollPhoto(Toll location){
         super(location);
+        for(int i : location.getConnectionInt())
+        	q.put(i, new LinkedList<Vehicle>());
         type = 3;
     }
         
@@ -48,9 +51,10 @@ public class TollPhoto extends TollBooth {
         while(true){    
             synchronized(q){
                 while(!q.isEmpty()){
-                    tmp = q.poll();
-                    tmp.setVisited(true);
+                    //tmp = q.poll();                    
                     try {
+                    	for (int i = 0; i < location.getConnectionInt().length; i++) {
+                    	tmp = q.get(location.getConnectionInt()[i]).poll();
                         query = "SELECT funds FROM users where userid = "
                             +tmp.getUserid()+";";
                         rs = st.executeQuery(query);
@@ -74,7 +78,8 @@ public class TollPhoto extends TollBooth {
                             "SET funds = " + (fund-5.0d) + 
                             "WHERE userid = " + tmp.getUserid()+";";
                         st.execute(query);
-                                                
+                        tmp.setVisited(true);
+                    	}              
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
