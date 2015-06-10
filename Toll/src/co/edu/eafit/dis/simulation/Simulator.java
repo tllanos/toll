@@ -288,7 +288,7 @@ public class Simulator {
             
             // *** Fin: Proceso de enlace entre "toll" e "interction" ***
             // *** Inicio: Definición de intersecciones fuente ***
-            for(Intersection ints: intersections.subList(0, 8)){
+            for(Intersection ints: intersections){
                 ints.setSource(true);
             }
             // *** Fin: Definición de intersecciones fuente ***

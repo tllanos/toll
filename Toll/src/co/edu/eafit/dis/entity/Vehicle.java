@@ -132,8 +132,7 @@ public class Vehicle implements Runnable {
 			}
 			rs.close();
 		} catch (Exception e) {
-			e.printStackTrace();
-			//System.out.println("Error connecting to the database");
+			System.out.println("Error connecting to the database");
 			System.exit(1);
 		}		
 		

@@ -58,8 +58,7 @@ public class TollPhoto extends TollBooth {
 						cars = true;
 					}
 				}
-				while (cars){
-                    //tmp = q.poll();                    
+				while (cars){                    
                     try {
                     	for (int i = 0; i < location.getConnectionInt().length; i++) {
                     	tmp = q.get(location.getConnectionInt()[i]).poll();

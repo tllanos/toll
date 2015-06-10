@@ -90,9 +90,6 @@ public class Generator implements Runnable {
 			Calendar rightNow = Calendar.getInstance();
 			int hour = rightNow.get(Calendar.HOUR_OF_DAY);
 			double f = (hour / 24.0d);
-//			if (f == 0) {
-//				f = 12; // error: Deberia ser 24, no 12
-//			}
 			int quantity = Math
 					.abs((int) (((Math.sin((2 * Math.PI) * f)) * 5940.0d) + 0.5d)) + 60;
 			long dt = (long) ((3600.0d / quantity) * 1000.0d);

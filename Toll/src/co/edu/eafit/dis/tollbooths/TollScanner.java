@@ -52,18 +52,16 @@ public class TollScanner extends TollBooth {
 		while (Main.running) {
 			cars = false;
 			synchronized (q) {
-				for(LinkedList<Vehicle> l : q.values()){
-					if(!l.isEmpty()){
+				for (LinkedList<Vehicle> l : q.values()) {
+					if (!l.isEmpty()) {
 						cars = true;
 					}
 				}
 				while (cars) {
-					// tmp = q.poll();
 					try {
-
 						for (int i = 0; i < location.getConnectionInt().length; i++) {
 							tmp = q.get(location.getConnectionInt()[i]).poll();
-							if(tmp != null){
+							if (tmp != null) {
 								query = "SELECT funds FROM users where userid = "
 										+ tmp.getUserid() + ";";
 								rs = st.executeQuery(query);
@@ -72,7 +70,7 @@ public class TollScanner extends TollBooth {
 								if (fund < 5) {
 									System.out.println("Un usario debe dinero");
 								}
-	
+
 								pstate = connection
 										.prepareStatement("INSERT INTO tollsensor "
 												+ "VALUES ( 5, ?, ?, ?, ?)"
@@ -83,7 +81,7 @@ public class TollScanner extends TollBooth {
 								pstate.setInt(3, tmp.getSensorId());
 								pstate.setInt(4, type);
 								pstate.execute();
-	
+
 								query = "UPDATE  users " + "SET funds = "
 										+ (fund - 5.0d) + "WHERE userid = "
 										+ tmp.getUserid() + ";";

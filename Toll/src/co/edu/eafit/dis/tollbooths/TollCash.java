@@ -57,7 +57,6 @@ public class TollCash extends TollBooth {
 					}
 				}
 				while (cars) {
-					// tmp = q.poll();
 					try {
 						for (int i = 0; i < location.getConnectionInt().length; i++) {
 							tmp = q.get(location.getConnectionInt()[i]).poll();
