@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.LinkedList;
 
+import co.edu.eafit.dis.Main;
 import co.edu.eafit.dis.entity.Vehicle;
 import co.edu.eafit.dis.graph.Toll;
 
@@ -47,7 +48,7 @@ public class TollCash extends TollBooth {
 	public void run() {
 		Vehicle tmp;
 		boolean cars;
-		while (true) {
+		while (Main.running) {
 			cars = true;
 			synchronized (q) {
 				for(LinkedList<Vehicle> l : q.values()){

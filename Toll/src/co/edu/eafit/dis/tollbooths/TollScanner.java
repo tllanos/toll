@@ -7,6 +7,7 @@ import java.util.LinkedList;
 
 import co.edu.eafit.dis.entity.Vehicle;
 import co.edu.eafit.dis.graph.Toll;
+import co.edu.eafit.dis.Main;
 
 /**
  * Esta clase es la representacion de las casetas que utilizan un analisis de un
@@ -48,7 +49,7 @@ public class TollScanner extends TollBooth {
 	public void run() {
 		Vehicle tmp;
 		boolean cars;
-		while (true) {
+		while (Main.running) {
 			cars = false;
 			synchronized (q) {
 				for(LinkedList<Vehicle> l : q.values()){

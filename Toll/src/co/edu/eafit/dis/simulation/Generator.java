@@ -118,7 +118,7 @@ public class Generator implements Runnable {
 			default:
 			case 1:
 				veh = new Vehicle(0, 0, null, 1, d.initDijkstra(tolls,
-						intersections, init, dest), tolls, intersections);
+						intersections, init, dest), tolls, intersections, connection);
 				register.add(veh);
 				break;
 			case 2:
@@ -137,7 +137,7 @@ public class Generator implements Runnable {
 					System.exit(1);
 				}
 				veh = new Vehicle(utmp, sensortmp, null, 2, d.initDijkstra(
-						tolls, intersections, init, dest), tolls, intersections);
+						tolls, intersections, init, dest), tolls, intersections, connection);
 				register.add(veh);
 				break;
 			case 3:
@@ -157,7 +157,7 @@ public class Generator implements Runnable {
 				}
 				veh = new Vehicle(max, max, null, 2,
 						d.initDijkstra(tolls, intersections, init, dest),
-						tolls, intersections);
+						tolls, intersections, connection);
 				register.add(veh);
 				break;
 			case 4:
@@ -177,7 +177,7 @@ public class Generator implements Runnable {
 					System.exit(1);
 				}
 				veh = new Vehicle(utmp, 0, platetmp, 3, d.initDijkstra(tolls,
-						intersections, init, dest), tolls, intersections);
+						intersections, init, dest), tolls, intersections, connection);
 				register.add(veh);
 				break;
 			case 5:
@@ -212,7 +212,7 @@ public class Generator implements Runnable {
 					System.exit(1);
 				}
 				veh = new Vehicle(max, 0, platetmp, 3, d.initDijkstra(tolls,
-						intersections, init, dest), tolls, intersections);
+						intersections, init, dest), tolls, intersections, connection);
 				register.add(veh);
 				break;
 			}

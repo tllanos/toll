@@ -1,5 +1,9 @@
 package co.edu.eafit.dis.entity;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +34,13 @@ public class Vehicle implements Runnable {
 	private ArrayList<Toll> tolls;
 	private ArrayList<Intersection> intersections;
 	private boolean visited;
+	private double velocity;
+	private Connection connection;
 
 	public void run() {
-		int source;
+
+		int source;	
+		int time;
 		location = Integer.parseInt(path.get(0).name);
 		path.remove(0);
 		Node last = null;
@@ -57,14 +65,15 @@ public class Vehicle implements Runnable {
 									+ " anomalo en la simulacion");
 							System.out.println("Frenando ejecucion");
 							System.exit(2);
-						}
+						}						
 						source = location;
 						path.remove(0);
 						last = t;
+						time = getTime(next, source); //ms					
 						((Toll) last).recieveVehicle(this, source);
 						while (!this.visited) {
 							try {
-								Thread.sleep(100);
+								Thread.sleep(time);
 							} catch (InterruptedException e) {
 								System.out
 										.println("Hubo un error "
@@ -87,8 +96,9 @@ public class Vehicle implements Runnable {
 						}
 						path.remove(0);
 						i.addVehicle(this);
+						time = getTime(location, next);
 						try {
-							Thread.sleep(60000);
+							Thread.sleep(time);
 						} catch (InterruptedException e) {
 							System.out.println("Hubo un error "
 									+ "irrecuperable " + "en la simulacion");
@@ -102,6 +112,32 @@ public class Vehicle implements Runnable {
 			location = next;
 		}
 		Thread.yield();
+	}
+	
+	private int getTime(int tollid, int intersection){
+		
+		int distance = 0;
+	    Statement st = null;
+	    ResultSet rs;
+		
+		try {
+			st = connection.createStatement();
+			String query = "SELECT distance FROM connection WHERE " +
+					"tollid = " + tollid + " AND " +
+					"intersection = " + intersection + " ;";
+			
+			rs = st.executeQuery(query);
+			while (rs.next()){
+				distance = rs.getInt(0);
+			}
+			rs.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			//System.out.println("Error connecting to the database");
+			System.exit(1);
+		}		
+		
+		return(distance/(int)velocity)*3600000;
 	}
 
 	/**
@@ -126,7 +162,7 @@ public class Vehicle implements Runnable {
 	 */
 	public Vehicle(int userid, int sensorid, String plate, int type,
 			List<Vertex> path, ArrayList<Toll> tolls,
-			ArrayList<Intersection> intersections) {
+			ArrayList<Intersection> intersections, Connection connection) {
 		this.userid = userid;
 		this.sensorid = sensorid;
 		this.plate = plate;
@@ -134,6 +170,8 @@ public class Vehicle implements Runnable {
 		this.path = path;
 		this.tolls = tolls;
 		this.intersections = intersections;
+		this.connection = connection;
+		this.velocity = (Math.random()*(100 - 40 + 1)) + 40; //Km/h
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {

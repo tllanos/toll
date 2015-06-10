@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import co.edu.eafit.dis.Main;
 import co.edu.eafit.dis.graph.Intersection;
 import co.edu.eafit.dis.graph.Toll;
 
@@ -86,7 +87,7 @@ public class Simulator {
                                              tolls, register);
         Thread threadg = new Thread(generator);
         threadg.start();
-        while(true){
+        while(Main.running){
             synchronized(vSim){
                 for(Thread t: vSim){
                     synchronized(t){
@@ -254,11 +255,10 @@ public class Simulator {
             query = "SELECT distinct intid "
                 + "FROM intersection";
             rs = st.executeQuery(query);
-            while(rs.next()){
-                intersections.add(
-                                  new Intersection((rs.getInt(1)+tolls.size()),
-                                                   false));
-            }
+			while (rs.next()) {
+				intersections.add(new Intersection(
+						(rs.getInt(1) + tolls.size()), false));
+			}
             rs.close();
             // ** Fin: Almacenamiento de "intersection" **
             // *** Fin: Proceso de almacenaje ***
