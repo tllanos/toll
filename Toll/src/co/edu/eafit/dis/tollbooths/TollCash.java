@@ -19,7 +19,7 @@ import co.edu.eafit.dis.graph.Toll;
  * constantemente revisar si tiene vehiculos por procesar y si es del caso los
  * procesa, primero creando la consulta en la base de datos y luego ya esperando
  * el tiempo que, segun lo estudiado, toma recorrer un peaje.
- * 
+ *
  * @author tllanos, ccorre20, icardena
  * @see TollPhoto
  * @see TollScanner
@@ -27,64 +27,65 @@ import co.edu.eafit.dis.graph.Toll;
  */
 public class TollCash extends TollBooth {
 
-	/**
-	 * Simplemente construye al objeto, dandole el tipo y lugar, y continua con
-	 * la construccion en el constructor del padre.
-	 * 
-	 * @param location
-	 *            el peaje en que se encuentra.
-	 * @see TollBooth#TollBooth(Toll)
-	 */
-	public TollCash(Toll location) {
-		super(location);
-		for (int i : location.getConnectionInt())
-			q.put(i, new LinkedList<Vehicle>());
-		type = 1;
-	}
+    /**
+     * Simplemente construye al objeto, dandole el tipo y lugar, y continua con
+     * la construccion en el constructor del padre.
+     * 
+     * @param location
+     *            el peaje en que se encuentra.
+     * @see TollBooth#TollBooth(Toll)
+     */
+    public TollCash(Toll location) {
+        super(location);
+        for (int i : location.getConnectionInt())
+            q.put(i, new LinkedList<Vehicle>());
+        type = 1;
+    }
 
-	/**
-	 * Ver {@link TollCash}
-	 */
-	public void run() {
-		Vehicle tmp;
-		boolean cars;
-		while (Main.running) {
-			cars = true;
-			synchronized (q) {
-				for(LinkedList<Vehicle> l : q.values()){
-					if(!l.isEmpty()){
-						cars = true;
-					}
-				}
-				while (cars) {
-					try {
-						for (int i = 0; i < location.getConnectionInt().length; i++) {
-							tmp = q.get(location.getConnectionInt()[i]).poll();
-							if(tmp != null){
-								pstate = connection
-										.prepareStatement("INSERT INTO tollcash VALUES ( 5, ?, ?, ?)"
-												+ "ON DUPLICATE KEY UPDATE date = date + INTERVAL 1 SECOND;");
-								pstate.setTimestamp(1, new Timestamp(Calendar
-										.getInstance().getTimeInMillis()));
-								pstate.setInt(2, location.getId());
-								pstate.setInt(3, type);
-								pstate.execute();
-								tmp.setVisited(true);
-							}
-						}
-						Thread.sleep(30000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    /**
+     * Ver {@link TollCash}
+     */
+    @Override
+    public void run() {
+        Vehicle tmp;
+        boolean cars;
+        while (Main.running) {
+            cars = true;
+            synchronized (q) {
+                for (LinkedList<Vehicle> l : q.values()) {
+                    if (!l.isEmpty()) {
+                        cars = true;
+                    }
+                }
+                while (cars) {
+                    try {
+                        for (int i = 0; i < location.getConnectionInt().length; i++) {
+                            tmp = q.get(location.getConnectionInt()[i]).poll();
+                            if (tmp != null) {
+                                pstate = connection
+                                        .prepareStatement("INSERT INTO tollcash VALUES ( 5, ?, ?, ?)"
+                                                + "ON DUPLICATE KEY UPDATE date = date + INTERVAL 1 SECOND;");
+                                pstate.setTimestamp(1, new Timestamp(Calendar
+                                        .getInstance().getTimeInMillis()));
+                                pstate.setInt(2, location.getId());
+                                pstate.setInt(3, type);
+                                pstate.execute();
+                                tmp.setVisited(true);
+                            }
+                        }
+                        Thread.sleep(30000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
