@@ -147,7 +147,7 @@ public class Generator implements Runnable {
                 register.add(veh);
                 break;
                 
-            //TollSensor
+            //TollSensor (Crea nuevo vehiculo)
                 //Tipo en simulación: 2
                 //Tipo en base de datos: 1
             case 3: 
@@ -158,7 +158,7 @@ public class Generator implements Runnable {
                     max = rs.getInt(1);
                     max++;
                     query = "INSERT INTO users VALUES (" + max + " , '" + max
-                            + "' " + ", 'root', 1 , " + max + " , NULL , 4 );";
+                            + "' " + ", 'root', 1 , " + max + " , NULL , 4 , 0);";
                     statement.execute(query);
                 } catch (SQLException e) {
                     System.out.println("Hubo un error "
@@ -223,7 +223,7 @@ public class Generator implements Runnable {
                     max = rs.getInt(1);
                     max++;
                     query = "INSERT INTO users VALUES (" + max + " " + ", '"
-                            + max + "' , 'root', 2 , NULL, '" + platetmp + "' , 1000);";
+                            + max + "' , 'root', 2 , NULL, '" + platetmp + "' , 1000, 0);";
                     statement.execute(query);
                 } catch (SQLException e) {
                     System.out.println("Hubo un error "

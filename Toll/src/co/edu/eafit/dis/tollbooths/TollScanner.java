@@ -99,7 +99,7 @@ public class TollScanner extends TollBooth {
 									pstate.setInt(3, location.getId());
 									pstate.execute();
 								    query = "UPDATE users " + 
-								    		"SET debt = debt + 5" +
+								    		"SET debt = debt + 5 " +
 								    		"WHERE userid = " + tmp.getUserid() + ";";
 								    st.execute(query);
 									tmp.setVisited(true);
