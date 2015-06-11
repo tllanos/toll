@@ -218,7 +218,7 @@ public class Simulator {
 
                     pstate.setInt(1, id);
 
-                    rs = pstate.executeQuery();
+                    rs = pstate.executeQuery();   
                     if (rs.next()) {
                         f += rs.getInt(1);
                     }

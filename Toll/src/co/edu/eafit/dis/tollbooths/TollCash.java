@@ -25,7 +25,7 @@ import co.edu.eafit.dis.graph.Toll;
  * @see TollScanner
  * @see java.lang.Runnable
  */
-public class TollCash extends TollBooth {
+public class TollCash extends TollBooth { 
 
     /**
      * Simplemente construye al objeto, dandole el tipo y lugar, y continua con

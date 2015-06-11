@@ -103,7 +103,7 @@ public class TollScanner extends TollBooth {
 									tmp.setVisited(true);
 								}
                             }
-                        }
+                        }       
                         Thread.sleep(15000);
 
                     } catch (InterruptedException e) {

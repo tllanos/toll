@@ -32,7 +32,7 @@ public class Generator implements Runnable {
     private ArrayList<Toll> tolls;
     private Register register;
     private Connection connection;
-    private Statement statement;
+    private Statement statement; 
     private ResultSet rs;
 
     /**

@@ -89,7 +89,7 @@ public class TollPhoto extends TollBooth {
 									tmp.setVisited(true);
 								} else {
 									System.out
-									.println("Un usuario debe dinero");
+									.println("Un usuario debe dinero"); 
 									pstate = connection
 											.prepareStatement("INSERT INTO infraction "
 													+ "VALUES ( 0,?, ?, ?, ?)"

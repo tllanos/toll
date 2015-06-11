@@ -28,7 +28,7 @@ import co.edu.eafit.dis.entity.Vehicle;
  *
  * @author tllanos, ccorre20, icardena
  * @see java.lang.Runnable
- * @see co.edu.eafit.dis.graph.Toll
+ * @see co.edu.eafit.dis.graph.Toll 
  */
 public abstract class TollBooth implements Runnable {
 

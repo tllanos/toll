@@ -42,7 +42,7 @@ public class Vehicle implements Runnable {
         int source;
         int time;
         location = Integer.parseInt(path.get(0).name);
-        path.remove(0);
+        path.remove(0); 
         Node last = null;
         for (Intersection i : intersections) {
             if (location == i.getId()) {
