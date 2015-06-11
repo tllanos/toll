@@ -122,12 +122,13 @@ public class Vehicle implements Runnable {
         int distance = 0;
         Statement st = null;
         ResultSet rs;
+        int source = intersection - tolls.size();
 
         try {
             st = connection.createStatement();
             String query = "SELECT distance FROM connection WHERE "
                     + "tollid = " + tollid + " AND " + "intersection = "
-                    + intersection + " ;";
+                    + source + " ;";
 
             rs = st.executeQuery(query);
             while (rs.next()) {
@@ -135,6 +136,7 @@ public class Vehicle implements Runnable {
             }
             rs.close();
         } catch (Exception e) {
+        	e.getStackTrace();
             System.out.println("Error connecting to the database");
             System.exit(1);
         }
