@@ -69,26 +69,40 @@ public class TollPhoto extends TollBooth {
                                 rs = st.executeQuery(query);
                                 rs.next();
                                 int fund = rs.getInt(1);
-                                if (fund < 5) {
-                                    System.out
-                                            .println("Un usuario debe dinero");
-                                }
-                                pstate = connection
-                                        .prepareStatement("INSERT INTO tollphoto "
-                                                + "VALUES ( 5, ?, ?, ?, ?)"
-                                                + "ON DUPLICATE KEY UPDATE date = date + INTERVAL 1 SECOND;");
-                                pstate.setTimestamp(1, new Timestamp(Calendar
-                                        .getInstance().getTimeInMillis()));
-                                pstate.setInt(2, location.getId());
-                                pstate.setString(3, tmp.getPlate());
-                                pstate.setInt(4, type);
-                                pstate.execute();
+								if (fund >= 5) {
+									pstate = connection
+											.prepareStatement("INSERT INTO tollphoto "
+													+ "VALUES ( 5, ?, ?, ?, ?)"
+													+ "ON DUPLICATE KEY UPDATE date = date + INTERVAL 1 SECOND;");
+									pstate.setTimestamp(1, new Timestamp(
+											Calendar.getInstance()
+													.getTimeInMillis()));
+									pstate.setInt(2, location.getId());
+									pstate.setString(3, tmp.getPlate());
+									pstate.setInt(4, type);
+									pstate.execute();
 
-                                query = "UPDATE  users " + "SET funds = "
-                                        + (fund - 5.0d) + "WHERE userid = "
-                                        + tmp.getUserid() + ";";
-                                st.execute(query);
-                                tmp.setVisited(true);
+									query = "UPDATE  users " + "SET funds = "
+											+ (fund - 5.0d) + "WHERE userid = "
+											+ tmp.getUserid() + ";";
+									st.execute(query);
+									tmp.setVisited(true);
+								} else {
+									System.out
+									.println("Un usuario debe dinero");
+									pstate = connection
+											.prepareStatement("INSERT INTO infraction "
+													+ "VALUES ( 0,?, ?, ?, ?)"
+													+ "ON DUPLICATE KEY UPDATE date = date + INTERVAL 1 SECOND;");
+									pstate.setString(1, tmp.getPlate());
+									pstate.setTimestamp(2, new Timestamp(
+											Calendar.getInstance()
+													.getTimeInMillis()));
+									pstate.setInt(3, location.getId());
+									pstate.setInt(4, type);
+									pstate.execute();
+									tmp.setVisited(true);									
+								}
                             }
                         }
                         Thread.sleep(100);

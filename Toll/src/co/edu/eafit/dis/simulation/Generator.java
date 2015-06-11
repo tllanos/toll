@@ -148,7 +148,7 @@ public class Generator implements Runnable {
                     max = rs.getInt(1);
                     max++;
                     query = "INSERT INTO users VALUES (" + max + " , " + max
-                            + " " + ", 1 , " + max + " , NULL , 1000);";
+                            + " " + ", 1 , " + max + " , NULL , 4, root);";
                     statement.execute(query);
                 } catch (SQLException e) {
                     System.out.println("Hubo un error "
@@ -205,7 +205,7 @@ public class Generator implements Runnable {
                     max = rs.getInt(1);
                     max++;
                     query = "INSERT INTO users VALUES (" + max + " " + ", "
-                            + max + " , 2 , NULL, '" + platetmp + "' , 1000);";
+                            + max + " , 2 , NULL, '" + platetmp + "' , 1000, root);";
                     statement.execute(query);
                 } catch (SQLException e) {
                     System.out.println("Hubo un error "

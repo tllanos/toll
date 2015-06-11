@@ -68,26 +68,40 @@ public class TollScanner extends TollBooth {
                                 rs = st.executeQuery(query);
                                 rs.next();
                                 int fund = rs.getInt(1);
-                                if (fund < 5) {
-                                    System.out.println("Un usario debe dinero");
-                                }
+								if (fund >= 5) {
+									pstate = connection
+											.prepareStatement("INSERT INTO tollsensor "
+													+ "VALUES ( 5, ?, ?, ?, ?)"
+													+ "ON DUPLICATE KEY UPDATE date = date + INTERVAL 1 SECOND;");
+									pstate.setTimestamp(1, new Timestamp(
+											Calendar.getInstance()
+													.getTimeInMillis()));
+									pstate.setInt(2, location.getId());
+									pstate.setInt(3, tmp.getSensorId());
+									pstate.setInt(4, type);
+									pstate.execute();
 
-                                pstate = connection
-                                        .prepareStatement("INSERT INTO tollsensor "
-                                                + "VALUES ( 5, ?, ?, ?, ?)"
-                                                + "ON DUPLICATE KEY UPDATE date = date + INTERVAL 1 SECOND;");
-                                pstate.setTimestamp(1, new Timestamp(Calendar
-                                        .getInstance().getTimeInMillis()));
-                                pstate.setInt(2, location.getId());
-                                pstate.setInt(3, tmp.getSensorId());
-                                pstate.setInt(4, type);
-                                pstate.execute();
-
-                                query = "UPDATE  users " + "SET funds = "
-                                        + (fund - 5.0d) + "WHERE userid = "
-                                        + tmp.getUserid() + ";";
-                                st.execute(query);
-                                tmp.setVisited(true);
+									query = "UPDATE  users " + "SET funds = "
+											+ (fund - 5.0d) + "WHERE userid = "
+											+ tmp.getUserid() + ";";
+									st.execute(query);
+									tmp.setVisited(true);
+								}else{
+									System.out
+									.println("Un usuario debe dinero");
+									pstate = connection
+											.prepareStatement("INSERT INTO infraction "
+													+ "VALUES ( ?,null, ?, ?, ?)"
+													+ "ON DUPLICATE KEY UPDATE date = date + INTERVAL 1 SECOND;");
+									pstate.setInt(1, tmp.getSensorId());
+									pstate.setTimestamp(2, new Timestamp(
+											Calendar.getInstance()
+													.getTimeInMillis()));
+									pstate.setInt(3, location.getId());
+									pstate.setInt(4, type);
+									pstate.execute();
+									tmp.setVisited(true);
+								}
                             }
                         }
                         Thread.sleep(15000);
