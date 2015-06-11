@@ -113,14 +113,20 @@ public class Generator implements Runnable {
                 nran = (nran < 50) ? 4 : 5;
             }
             switch (nran) {
-            default:
-            case 1:
+            	
+            //TollCash
+            	//Tipo en simulación: 1
+            case 1: 
                 veh = new Vehicle(0, 0, null, 1, d.initDijkstra(tolls,
                         intersections, init, dest), tolls, intersections,
-                        connection);
+                        connection, register);
                 register.add(veh);
                 break;
-            case 2:
+                
+            //TollSensor
+                //Tipo en simulación: 2
+                //Tipo en base de datos: 1
+            case 2:  
                 try {
                     do {
                         rs = statement.executeQuery("SELECT userid, "
@@ -137,10 +143,14 @@ public class Generator implements Runnable {
                 }
                 veh = new Vehicle(utmp, sensortmp, null, 2, d.initDijkstra(
                         tolls, intersections, init, dest), tolls,
-                        intersections, connection);
+                        intersections, connection, register);
                 register.add(veh);
                 break;
-            case 3:
+                
+            //TollSensor
+                //Tipo en simulación: 2
+                //Tipo en base de datos: 1
+            case 3: 
                 try {
                     query = "SELECT MAX(userid) FROM users";
                     rs = statement.executeQuery(query);
@@ -157,10 +167,14 @@ public class Generator implements Runnable {
                 }
                 veh = new Vehicle(max, max, null, 2, d.initDijkstra(tolls,
                         intersections, init, dest), tolls, intersections,
-                        connection);
+                        connection, register);
                 register.add(veh);
                 break;
-            case 4:
+                
+            //TollPhoto
+                //Tipo en simulación: 3
+                //Tipo en base de datos: 2
+            case 4: 
                 try {
                     do {
                         rs = statement.executeQuery("SELECT userid, "
@@ -178,9 +192,13 @@ public class Generator implements Runnable {
                 }
                 veh = new Vehicle(utmp, 0, platetmp, 3, d.initDijkstra(tolls,
                         intersections, init, dest), tolls, intersections,
-                        connection);
+                        connection, register);
                 register.add(veh);
                 break;
+                
+            //TollPhoto
+                //Tipo en simulación: 3
+                //Tipo en base de datos: 2    
             case 5:
                 try {
                     do {
@@ -214,7 +232,7 @@ public class Generator implements Runnable {
                 }
                 veh = new Vehicle(max, 0, platetmp, 3, d.initDijkstra(tolls,
                         intersections, init, dest), tolls, intersections,
-                        connection);
+                        connection, register);
                 register.add(veh);
                 break;
             }

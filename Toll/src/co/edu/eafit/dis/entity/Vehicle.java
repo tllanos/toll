@@ -10,6 +10,7 @@ import co.edu.eafit.dis.dijkstra.*;
 import co.edu.eafit.dis.graph.Intersection;
 import co.edu.eafit.dis.graph.Node;
 import co.edu.eafit.dis.graph.Toll;
+import co.edu.eafit.dis.simulation.Register;
 
 /**
  * Esta clase es el vehiculo como tal que se mueve a traves de la simulacion y
@@ -24,6 +25,7 @@ import co.edu.eafit.dis.graph.Toll;
  *
  */
 public class Vehicle implements Runnable {
+	private Register register;
     private int userid;
     private int sensorid;
     private String plate;
@@ -112,6 +114,7 @@ public class Vehicle implements Runnable {
             location = next;
         }
         Thread.yield();
+        register.destroy(this);
     }
 
     private int getTime(int tollid, int intersection) {
@@ -161,7 +164,9 @@ public class Vehicle implements Runnable {
      */
     public Vehicle(int userid, int sensorid, String plate, int type,
             List<Vertex> path, ArrayList<Toll> tolls,
-            ArrayList<Intersection> intersections, Connection connection) {
+            ArrayList<Intersection> intersections, Connection connection,
+            Register register) {
+    	this.register = register;
         this.userid = userid;
         this.sensorid = sensorid;
         this.plate = plate;

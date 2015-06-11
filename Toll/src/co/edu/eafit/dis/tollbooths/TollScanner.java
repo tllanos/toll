@@ -71,14 +71,13 @@ public class TollScanner extends TollBooth {
 								if (fund >= 5) {
 									pstate = connection
 											.prepareStatement("INSERT INTO tollsensor "
-													+ "VALUES ( 5, ?, ?, ?, ?)"
+													+ "VALUES ( 5, ?, ?, ?, 1)"
 													+ "ON DUPLICATE KEY UPDATE date = date + INTERVAL 1 SECOND;");
 									pstate.setTimestamp(1, new Timestamp(
 											Calendar.getInstance()
 													.getTimeInMillis()));
 									pstate.setInt(2, location.getId());
 									pstate.setInt(3, tmp.getSensorId());
-									pstate.setInt(4, type);
 									pstate.execute();
 
 									query = "UPDATE  users " + "SET funds = "
@@ -91,15 +90,18 @@ public class TollScanner extends TollBooth {
 									.println("Un usuario debe dinero");
 									pstate = connection
 											.prepareStatement("INSERT INTO infraction "
-													+ "VALUES ( ?,null, ?, ?, ?)"
+													+ "VALUES ( ?,null, ?, ?, 1)"
 													+ "ON DUPLICATE KEY UPDATE date = date + INTERVAL 1 SECOND;");
 									pstate.setInt(1, tmp.getSensorId());
 									pstate.setTimestamp(2, new Timestamp(
 											Calendar.getInstance()
 													.getTimeInMillis()));
 									pstate.setInt(3, location.getId());
-									pstate.setInt(4, type);
 									pstate.execute();
+								    query = "UPDATE users " + 
+								    		"SET debt = debt + 5" +
+								    		"WHERE userid = " + tmp.getUserid() + ";";
+								    st.execute(query);
 									tmp.setVisited(true);
 								}
                             }

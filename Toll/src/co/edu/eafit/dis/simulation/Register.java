@@ -1,6 +1,6 @@
 package co.edu.eafit.dis.simulation;
 
-import java.util.ArrayList;
+import java.util.concurrent.*;
 
 import co.edu.eafit.dis.entity.Vehicle;
 
@@ -12,14 +12,14 @@ import co.edu.eafit.dis.entity.Vehicle;
  * @author tllanos, ccorre20, icardena
  */
 public class Register {
-    private ArrayList<Vehicle> vehs;
+    private CopyOnWriteArrayList<Vehicle> vehs;
 
     /**
-     * Inicializa la variable "vehs" de tipo "ArrayList", la cual contiene todos
+     * Inicializa la variable "vehs" de tipo "CopyOnWriteArrayList", la cual contiene todos
      * aquellos vehiculos que existen en la simulación.
      */
     public Register() {
-        vehs = new ArrayList<Vehicle>();
+        vehs = new CopyOnWriteArrayList<Vehicle>();
     }
 
     /**

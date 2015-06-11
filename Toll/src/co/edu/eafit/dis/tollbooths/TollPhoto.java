@@ -72,14 +72,13 @@ public class TollPhoto extends TollBooth {
 								if (fund >= 5) {
 									pstate = connection
 											.prepareStatement("INSERT INTO tollphoto "
-													+ "VALUES ( 5, ?, ?, ?, ?)"
+													+ "VALUES ( 5, ?, ?, ?, 2)"
 													+ "ON DUPLICATE KEY UPDATE date = date + INTERVAL 1 SECOND;");
 									pstate.setTimestamp(1, new Timestamp(
 											Calendar.getInstance()
 													.getTimeInMillis()));
 									pstate.setInt(2, location.getId());
 									pstate.setString(3, tmp.getPlate());
-									pstate.setInt(4, type);
 									pstate.execute();
 
 									query = "UPDATE  users " + "SET funds = "
@@ -92,15 +91,18 @@ public class TollPhoto extends TollBooth {
 									.println("Un usuario debe dinero"); 
 									pstate = connection
 											.prepareStatement("INSERT INTO infraction "
-													+ "VALUES ( 0,?, ?, ?, ?)"
+													+ "VALUES ( 0,?, ?, ?, 2)"
 													+ "ON DUPLICATE KEY UPDATE date = date + INTERVAL 1 SECOND;");
 									pstate.setString(1, tmp.getPlate());
 									pstate.setTimestamp(2, new Timestamp(
 											Calendar.getInstance()
 													.getTimeInMillis()));
 									pstate.setInt(3, location.getId());
-									pstate.setInt(4, type);
 									pstate.execute();
+								    query = "UPDATE users " + 
+								    		"SET debt = debt + 5" +
+								    		"WHERE userid = " + tmp.getUserid() + ";";
+								    st.execute(query);
 									tmp.setVisited(true);									
 								}
                             }
