@@ -6,7 +6,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import co.edu.eafit.dis.dijkstra.*;
+import co.edu.eafit.dis.dijkstra.Vertex;
 import co.edu.eafit.dis.graph.Intersection;
 import co.edu.eafit.dis.graph.Node;
 import co.edu.eafit.dis.graph.Toll;
@@ -24,47 +24,47 @@ import co.edu.eafit.dis.simulation.Register;
  * @author tllanos, ccorre20, icardena
  *
  */
-public class Vehicle implements Runnable {
-	private Register register;
-    private int userid;
-    private int sensorid;
-    private String plate;
-    private int type;
-    private int location;
-    private List<Vertex> path;
-    private ArrayList<Toll> tolls;
+public class Vehicle implements Runnable{
+    private Register                register;
+    private int                     userid;
+    private int                     sensorid;
+    private String                  plate;
+    private int                     type;
+    private int                     location;
+    private List<Vertex>            path;
+    private ArrayList<Toll>         tolls;
     private ArrayList<Intersection> intersections;
-    private boolean visited;
-    private double velocity;
-    private Connection connection;
+    private boolean                 visited;
+    private double                  velocity;
+    private Connection              connection;
 
     @Override
-    public void run() {
+    public void run(){
 
         int source;
         int time;
         location = Integer.parseInt(path.get(0).name);
-        path.remove(0); 
+        path.remove(0);
         Node last = null;
-        for (Intersection i : intersections) {
-            if (location == i.getId()) {
+        for(Intersection i : intersections){
+            if(location == i.getId()){
                 i.addVehicle(this);
                 last = i;
                 break;
             }
         }
         int next;
-        while (!path.isEmpty()) {
+        while(!path.isEmpty()){
             visited = false;
             next = Integer.parseInt(path.get(0).name);
-            if (next < tolls.size() + 1) {
-                for (Toll t : tolls) {
-                    if (t.getId() == next) {
-                        if (last instanceof Intersection) {
+            if(next < tolls.size() + 1){
+                for(Toll t : tolls){
+                    if(t.getId() == next){
+                        if(last instanceof Intersection){
                             ((Intersection) last).removeVehicle(this);
-                        } else {
+                        }else{
                             System.out.println("Hubo un comportamiento"
-                                    + " anomalo en la simulacion");
+                                + " anomalo en la simulacion");
                             System.out.println("Frenando ejecucion");
                             System.exit(2);
                         }
@@ -73,37 +73,37 @@ public class Vehicle implements Runnable {
                         last = t;
                         time = getTime(next, source); // ms
                         ((Toll) last).recieveVehicle(this, source);
-                        while (!this.visited) {
-                            try {
+                        while(!this.visited){
+                            try{
                                 Thread.sleep(time);
-                            } catch (InterruptedException e) {
+                            }catch(InterruptedException e){
                                 System.out
-                                        .println("Hubo un error "
-                                                + "irrecuperable "
-                                                + "en la simulacion");
+                                    .println("Hubo un error "
+                                        + "irrecuperable "
+                                        + "en la simulacion");
                                 System.exit(1);
                             }
                         }
                         break;
                     }
                 }
-            } else {
-                for (Intersection i : intersections) {
-                    if (i.getId() == next) {
-                        if (!(last instanceof Toll)) {
+            }else{
+                for(Intersection i : intersections){
+                    if(i.getId() == next){
+                        if(!(last instanceof Toll)){
                             System.out.println("Hubo un comportamiento"
-                                    + " anomalo en la simulacion");
+                                + " anomalo en la simulacion");
                             System.out.println("Frenando ejecucion");
                             System.exit(2);
                         }
                         path.remove(0);
                         i.addVehicle(this);
                         time = getTime(location, next);
-                        try {
+                        try{
                             Thread.sleep(time);
-                        } catch (InterruptedException e) {
+                        }catch(InterruptedException e){
                             System.out.println("Hubo un error "
-                                    + "irrecuperable " + "en la simulacion");
+                                + "irrecuperable " + "en la simulacion");
                             System.exit(1);
                         }
                         last = i;
@@ -117,31 +117,31 @@ public class Vehicle implements Runnable {
         register.destroy(this);
     }
 
-    private int getTime(int tollid, int intersection) {
+    private int getTime(int tollid, int intersection){
 
         int distance = 0;
         Statement st = null;
         ResultSet rs;
         int source = intersection - tolls.size();
 
-        try {
+        try{
             st = connection.createStatement();
             String query = "SELECT distance FROM connection WHERE "
-                    + "tollid = " + tollid + " AND " + "intersection = "
-                    + source + " ;";
+                + "tollid = " + tollid + " AND " + "intersection = "
+                + source + " ;";
 
             rs = st.executeQuery(query);
-            while (rs.next()) {
-                distance = rs.getInt(0);
+            while(rs.next()){
+                distance = rs.getInt(1);
             }
             rs.close();
-        } catch (Exception e) {
-        	e.getStackTrace();
+        }catch(Exception e){
+            e.printStackTrace();
             System.out.println("Error connecting to the database");
             System.exit(1);
         }
 
-        return (distance / (int) velocity) * 3600000;
+        return (int) ((distance / velocity) * 3600000.0d);
     }
 
     /**
@@ -165,10 +165,10 @@ public class Vehicle implements Runnable {
      *            referencias a todas las intersecciones
      */
     public Vehicle(int userid, int sensorid, String plate, int type,
-            List<Vertex> path, ArrayList<Toll> tolls,
-            ArrayList<Intersection> intersections, Connection connection,
-            Register register) {
-    	this.register = register;
+        List<Vertex> path, ArrayList<Toll> tolls,
+        ArrayList<Intersection> intersections, Connection connection,
+        Register register){
+        this.register = register;
         this.userid = userid;
         this.sensorid = sensorid;
         this.plate = plate;
@@ -178,11 +178,11 @@ public class Vehicle implements Runnable {
         this.intersections = intersections;
         this.connection = connection;
         this.velocity = (Math.random() * (100 - 40 + 1)) + 40; // Km/h
-        try {
+        try{
             Thread.sleep(100);
-        } catch (InterruptedException e) {
+        }catch(InterruptedException e){
             System.out.println("Hubo un error "
-                    + "irrecuperable en la simulacion");
+                + "irrecuperable en la simulacion");
             System.exit(1);
         }
     }
@@ -193,7 +193,7 @@ public class Vehicle implements Runnable {
      * @param visited
      *            true si completo.
      */
-    public void setVisited(boolean visited) {
+    public void setVisited(boolean visited){
         this.visited = visited;
     }
 
@@ -202,7 +202,7 @@ public class Vehicle implements Runnable {
      * 
      * @return el tipo del carro.
      */
-    public int getType() {
+    public int getType(){
         return type;
     }
 
@@ -211,7 +211,7 @@ public class Vehicle implements Runnable {
      * 
      * @return el id.
      */
-    public int getUserid() {
+    public int getUserid(){
         return userid;
     }
 
@@ -220,7 +220,7 @@ public class Vehicle implements Runnable {
      * 
      * @return sensorid.
      */
-    public int getSensorId() {
+    public int getSensorId(){
         return sensorid;
     }
 
@@ -229,7 +229,7 @@ public class Vehicle implements Runnable {
      * 
      * @return la placa.
      */
-    public String getPlate() {
+    public String getPlate(){
         return plate;
     }
 
